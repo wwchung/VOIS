@@ -16,7 +16,7 @@ from docx import Document
 
 
 #Phone files
-from voisDocuments import voisDocuments as docs
+import vois_documents as docs
 
 
 
@@ -34,7 +34,7 @@ import vois_email
 
 
 #Web files
-import websearch
+import vois_websearch
 
 
 
@@ -72,10 +72,6 @@ class phoneScreen(Screen):
 
 class emailScreen(Screen):
     pass
-
-
-
-
 
 
 
@@ -236,8 +232,8 @@ sm.add_widget(prevDocsScreen(name='prevDocs'))
 sm.add_widget(listDocsScreen(name='listDocs'))
 
 
-sm.add_widget(websearch.SearchScreen(name='search'))
-sm.add_widget(websearch.ResultScreen(name='result'))
+sm.add_widget(vois_websearch.SearchScreen(name='search'))
+sm.add_widget(vois_websearch.ResultScreen(name='result'))
 
 class vois(App):
 

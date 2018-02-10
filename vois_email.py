@@ -36,7 +36,7 @@ results = SERVICE.users().getProfile(userId='me').execute()
 SENDER = results.get('emailAddress', [])
 
 
-Builder.load_file('VOISemail.kv')
+# Builder.load_file('VOISemail.kv')
 
 
 class EmailMainScreen(Screen):
@@ -247,23 +247,3 @@ class MessageScreen(Screen):
             MSG_INFO['forward_body'] = forward_msg
         self.ids.compose_btn.bind(on_release=partial(self.manager\
                                   .get_screen('compose').format_msg, False))
-
-
-class VOISemail(App):
-
-    def build(self):
-        sm = ScreenManager()
-        sm.add_widget(EmailMainScreen(name='emailMain'))
-        sm.add_widget(ComposeScreen(name='compose'))
-        sm.add_widget(InboxScreen(name='inbox'))
-        sm.add_widget(MessageScreen(name='message'))
-        sm.add_widget(SentBoxScreen(name='sentBox'))
-        return sm
-
-
-def main():
-    VOISemail().run()
-
-
-if __name__ == '__main__':
-    main()

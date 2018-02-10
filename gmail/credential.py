@@ -18,7 +18,7 @@ SCOPES = ['https://mail.google.com/',
           'https://www.googleapis.com/auth/gmail.modify',
           'https://www.googleapis.com/auth/gmail.compose',
           'https://www.googleapis.com/auth/gmail.send']
-CLIENT_SECRET_FILE = 'VOIS_client_secret.json'
+CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'VOIS Email'
 
 
@@ -36,8 +36,7 @@ def get_credentials():
     if not os.path.exists(credential_dir):
         os.makedirs(credential_dir)
     credential_path = os.path.join(credential_dir,
-                                   'VOIS_client_secret.json')
-
+                                   'client_secret.json')
     store = Storage(credential_path)
     credentials = store.get()
     if not credentials or credentials.invalid:

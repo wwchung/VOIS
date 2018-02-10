@@ -25,71 +25,6 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 # chrome_path = '/usr/bin/google-chrome %s'
 
 
-Builder.load_string("""
-<SearchScreen>:
-	search_input: search_input
-	GridLayout:
-	    rows: 3
-		cols: 1
-	    Label:
-	        text: 'VOIS - Web Search'
-	        font_size: 112
-	    TextInput:
-	    	id: search_input
-	    	font_size: 112
-	        multiline: False
-	    GridLayout:
-	    	rows: 1
-	    	cols: 2
-		    Button:
-		    	text: 'Search'
-		    	font_size: 56
-		        on_press:
-		        	root.manager.transition.direction = 'left'
-		        	root.manager.current = 'result'
-		    Button:
-		    	text: "I'm Feeling Lucky"
-		    	font_size: 56
-		    	on_press: root.im_feeling_lucky()
-<ResultScreen>:
-	on_enter: root.show_result()
-	on_leave: root.reset()
-	button1: button1
-	button2: button2
-	button3: button3
-	button4: button4
-	button5: button5
-	GridLayout:
-		rows: 6
-		cols: 1
-		Button:
-			text: 'Back'
-			font_size: 56
-			on_press:
-				root.manager.transition.direction = 'right'
-				root.manager.current = 'search'
-		Button:
-			id: button1
-			text: 'Loading...'
-			font_size: 20
-		Button:
-			id: button2
-			text: 'Loading...'
-			font_size: 20
-		Button:
-			id: button3
-			text: 'Loading...'
-			font_size: 20
-		Button:
-			id: button4
-			text: 'Loading...'
-			font_size: 20
-		Button:
-			id: button5
-			text: 'Loading...'
-			font_size: 20
-""")
-
 
 class SearchScreen(Screen):
 
@@ -123,7 +58,7 @@ class ResultScreen(Screen):
 	button3 = ObjectProperty(None)
 	button4 = ObjectProperty(None)
 	button5 = ObjectProperty(None)
-	
+
 	def show_result(self):
 		search_url = google_url + self.manager.get_screen('search').search_input.text.replace(' ', '+')
 

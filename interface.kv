@@ -8,27 +8,27 @@
 
         Button:
             text: 'Phone'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'phone'
 
-        Button: 
+        Button:
             text: 'Email'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'left'
-                root.manager.current = 'email'
+                root.manager.current = 'emailMain'
 
         Button:
             text: 'Documents'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'docs'
 
-        Button: 
+        Button:
             text: 'Web Search'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'left'
-                root.manager.current = 'web'
+                root.manager.current = 'search'
 
         Button:
             text: 'Exit'
@@ -49,41 +49,7 @@
 
         Button:
             text: 'Back'
-            on_press: 
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'home'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<emailScreen>:
-    GridLayout:
-        cols: 2
-        rows: 2
-
-        Label:
-            text: 'VOIS - Email'
-
-        Button: 
-            text: 'Inbox'
-
-        Button: 
-            text: 'Compose'
-
-        Button:
-            text: 'Back'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
 
@@ -115,6 +81,12 @@
             on_release:
                 root.manager.transition.direction = 'up'
                 root.manager.current = 'sentBox'
+        Button:
+            text: 'BACK'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'up'
+                root.manager.current = 'home'
 
 
 <ComposeScreen>:
@@ -312,13 +284,13 @@
 
             Button:
                 text: 'New Document'
-                on_press: 
+                on_press:
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'newDocs'
 
             Button:
                 text: 'Previous Documents'
-                on_press: 
+                on_press:
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'prevDocs'
 
@@ -333,7 +305,7 @@
                     root.manager.current = 'home'
 
 
-        
+
 
 <newDocsScreen>
     GridLayout:
@@ -347,17 +319,17 @@
             cols: 2
             rows: 1
 
-            Label: 
+            Label:
                 text: 'Folder Name'
 
-            Label: 
+            Label:
                 text: 'Document Name'
 
         GridLayout:
             cols: 2
             rows: 1
 
-            TextInput: 
+            TextInput:
                 id: new_folder_id
                 multiline: False
                 focus: True
@@ -366,9 +338,9 @@
                 id: new_doc_id
                 multiline: False
                 focus: True
-                on_text_validate: 
+                on_text_validate:
                     root.manager.get_screen('newDocs').newDoc(root.manager.get_screen('newDocs').ids.new_folder_id.text,self.text)
-                    
+
 
         GridLayout:
             cols: 1
@@ -376,7 +348,7 @@
 
             Button:
                 text: 'Back'
-                on_press: 
+                on_press:
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'docs'
 
@@ -394,7 +366,7 @@
             cols: 2
             rows: 1
 
-            Label: 
+            Label:
                 text: 'Top 10 Most Recently Modified'
 
             Label:
@@ -417,7 +389,7 @@
                 focus: True
                 on_text_validate:
                     root.manager.get_screen('prevDocs').byFolder(self.text)
-                    
+
         GridLayout:
             cols: 1
             rows: 1
@@ -505,7 +477,7 @@
                 root.manager.current = 'prevDocs'
 
 
-        
+
 
 <webScreen>:
     GridLayout:
@@ -519,30 +491,78 @@
             text: 'Enter Search'
             multiline: False
 
-        Button: 
+        Button:
             text: 'Back'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
 
 
+<SearchScreen>:
+	search_input: search_input
+	GridLayout:
+	    rows: 4
+		cols: 1
+	    Label:
+	        text: 'VOIS - Web Search'
+	        font_size: 112
+	    TextInput:
+	    	id: search_input
+	    	font_size: 112
+	        multiline: False
+	    GridLayout:
+	    	rows: 1
+	    	cols: 2
+		    Button:
+		    	text: 'Search'
+		    	font_size: 56
+		        on_press:
+		        	root.manager.transition.direction = 'left'
+		        	root.manager.current = 'result'
+		    Button:
+		    	text: "I'm Feeling Lucky"
+		    	font_size: 56
+		    	on_press: root.im_feeling_lucky()
+        Button:
+            text: "Back"
+            font_size: 56
+            on_press: root.manager.current = 'home'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
-
+            
+<ResultScreen>:
+	on_enter: root.show_result()
+	on_leave: root.reset()
+	button1: button1
+	button2: button2
+	button3: button3
+	button4: button4
+	button5: button5
+	GridLayout:
+		rows: 6
+		cols: 1
+		Button:
+			text: 'Back'
+			font_size: 56
+			on_press:
+				root.manager.transition.direction = 'right'
+				root.manager.current = 'search'
+		Button:
+			id: button1
+			text: 'Loading...'
+			font_size: 20
+		Button:
+			id: button2
+			text: 'Loading...'
+			font_size: 20
+		Button:
+			id: button3
+			text: 'Loading...'
+			font_size: 20
+		Button:
+			id: button4
+			text: 'Loading...'
+			font_size: 20
+		Button:
+			id: button5
+			text: 'Loading...'
+			font_size: 20

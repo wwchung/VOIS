@@ -22,7 +22,7 @@ import time
 def createPath(folder_name):
 
 	current_dir = os.getcwd() #Get current working directory --> Since VOIS lives on Desktop, will be Desktop/vois
-	sep = 'vois' 
+	sep = 'vois'
 	path = current_dir.split(sep,1)[0] #Remove vois from path. The path now is the Desktop
 
 	#If we don't have an empty folder name, then we want to add it to the path
@@ -126,7 +126,7 @@ def searchDirectory(folder_name=''):
 
 
 	sortByModified(full_paths)
-	
+
 	return full_paths, documents_map
 
 
@@ -163,7 +163,5 @@ def topTenPrevDocs():
 
 
 	sortByModified(full_paths)
-	
+
 	return full_paths, documents_map
-
-

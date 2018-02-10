@@ -1,0 +1,548 @@
+<homeScreen>:
+    GridLayout:
+        cols: 1
+        rows: 6
+
+        Label:
+            text: 'Welcome to VOIS'
+
+        Button:
+            text: 'Phone'
+            on_press: 
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'phone'
+
+        Button: 
+            text: 'Email'
+            on_press: 
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'email'
+
+        Button:
+            text: 'Documents'
+            on_press: 
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'docs'
+
+        Button: 
+            text: 'Web Search'
+            on_press: 
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'web'
+
+        Button:
+            text: 'Exit'
+            on_press: root.manager.get_screen('home').quit()
+
+<phoneScreen>:
+    GridLayout:
+        cols: 1
+        rows: 3
+
+        Label:
+            text: 'VOIS - Phone'
+
+        TextInput:
+            text: 'Enter Number'
+            multiline: False
+            on_text_validate: root.manager.get_screen('phone').printForm(self.text)
+
+        Button:
+            text: 'Back'
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'home'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<emailScreen>:
+    GridLayout:
+        cols: 2
+        rows: 2
+
+        Label:
+            text: 'VOIS - Email'
+
+        Button: 
+            text: 'Inbox'
+
+        Button: 
+            text: 'Compose'
+
+        Button:
+            text: 'Back'
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'home'
+
+
+
+
+<EmailMainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            font_size: 60
+            text: 'VOIS - Email'
+        Button:
+            text: 'COMPOSE'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'compose'
+                root.manager.get_screen('compose').clear_inputs()
+        Button:
+            text: 'INBOX'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'down'
+                root.manager.current = 'inbox'
+        Button:
+            text: 'SENT MAIL'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'up'
+                root.manager.current = 'sentBox'
+
+
+<ComposeScreen>:
+    GridLayout:
+        cols: 1
+        rows: 3
+        BoxLayout:
+            size_hint: (.1, None)
+            height: 80
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                font_size: 30
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    root.go_back()
+            Button:
+                text: 'Send'
+                size_hint: (.7, None)
+                height: 80
+                font_size: 30
+                on_release:
+                    root.send_email()
+        GridLayout:
+            size_hint: (.1, None)
+            height: 160
+            cols: 2
+            rows: 2
+            Label:
+                size_hint: (.2, None)
+                height: 80
+                font_size: 38
+                text: 'To: '
+            TextInput:
+                id: to_id
+                size_hint: (.2, None)
+                height: 80
+                font_size: 48
+                text: ''
+            Label:
+                size_hint: (.2, None)
+                height: 80
+                font_size: 38
+                text: 'Subject: '
+            TextInput:
+                id: subject_id
+                size_hint: (.8, None)
+                height: 80
+                font_size: 48
+                text: ''
+        TextInput:
+            id: body_id
+
+            text: ''
+
+<InboxScreen>:
+    on_enter:
+        root.get_inbox_emails()
+    BoxLayout:
+        id: box_id
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            Button:
+                size_hint: (.3, None)
+                text: 'Back'
+                height: 80
+                on_release:
+                    root.manager.transition.direction = 'up'
+                    root.manager.current = 'emailMain'
+            Button:
+                size_hint: (.7, None)
+                text: 'Refresh'
+                height: 80
+                on_release: root.get_inbox_emails()
+        Label:
+            id: loading_label1
+            text: 'Loading . . .'
+            font_size: 36
+
+
+<SentBoxScreen>:
+    on_enter:
+        root.get_sent_emails()
+    BoxLayout:
+        id: sent_box_id
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                on_release:
+                    root.manager.transition.direction = 'down'
+                    root.manager.current = 'emailMain'
+            Button:
+                text: 'Refresh'
+                size_hint: (.7, None)
+                height: 80
+                on_release: root.get_sent_emails()
+        Label:
+            id: loading_label2
+            text: 'Loading . . .'
+            font_size: 36
+
+
+<MessageScreen>:
+    on_enter:
+        root.manager.transition.direction = 'right'
+    on_leave: root.manager.transition.direction = 'left'
+    GridLayout:
+        cols: 1
+        rows: 3
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            id: message_btns
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                on_release:
+                    root.go_back()
+            Button:
+                id: compose_btn
+                text: 'Reply'
+                size_hint: (.7, None)
+                height: 80
+        GridLayout:
+            size_hint: (.1, None)
+            height: 160
+            cols: 2
+            rows: 2
+            Label:
+                size_hint: (.2, None)
+                text: 'From:'
+                height: 80
+            Label:
+                id: address_view_id
+                size_hint: (.8, None)
+                text: ''
+                text_size: self.width, None
+                height: 80
+            Label:
+                size_hint: (.2, None)
+                text: 'Subject:'
+                height: 80
+            Label:
+                id: subject_view_id
+                size_hint: (.8, None)
+                text: ''
+                text_size: self.width, None
+                height: 80
+        TextInput:
+            id: body_view_id
+            text: '1'
+            font_size: 30
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<docsScreen>:
+
+    GridLayout:
+        cols: 1
+        rows: 3
+
+        Label:
+            text: 'VOIS - Documents'
+
+
+        GridLayout:
+
+            cols: 2
+            rows: 1
+
+            Button:
+                text: 'New Document'
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'newDocs'
+
+            Button:
+                text: 'Previous Documents'
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'prevDocs'
+
+        GridLayout:
+            cols: 1
+            rows: 1
+
+            Button:
+                text: 'Back'
+                on_press:
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'home'
+
+
+        
+
+<newDocsScreen>
+    GridLayout:
+        cols: 1
+        rows: 4
+
+        Label:
+            text: 'VOIS - Documents - New Document'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            Label: 
+                text: 'Folder Name'
+
+            Label: 
+                text: 'Document Name'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            TextInput: 
+                id: new_folder_id
+                multiline: False
+                focus: True
+
+            TextInput:
+                id: new_doc_id
+                multiline: False
+                focus: True
+                on_text_validate: 
+                    root.manager.get_screen('newDocs').newDoc(root.manager.get_screen('newDocs').ids.new_folder_id.text,self.text)
+                    
+
+        GridLayout:
+            cols: 1
+            rows: 1
+
+            Button:
+                text: 'Back'
+                on_press: 
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'docs'
+
+
+
+<prevDocsScreen>
+    GridLayout:
+        cols: 1
+        rows: 4
+
+        Label:
+            text: 'VOIS - Documents - Previous Documents'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            Label: 
+                text: 'Top 10 Most Recently Modified'
+
+            Label:
+                text: 'Search Folder'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            Button:
+                text: 'Top 10'
+                on_press:
+                    root.manager.get_screen('listDocs').topTen()
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'listDocs'
+
+            TextInput:
+                id: prev_folder_id
+                multiline: False
+                focus: True
+                on_text_validate:
+                    root.manager.get_screen('prevDocs').byFolder(self.text)
+                    
+        GridLayout:
+            cols: 1
+            rows: 1
+
+            Button:
+                text: 'Back'
+                on_press:
+                    root.manager.transition.direction = 'right'
+                    root.manager.current = 'docs'
+
+
+<listDocsScreen>
+    GridLayout:
+        cols: 1
+        rows: 12
+
+        Label:
+            id: title
+            text: 'VOIS - Documents - Previous Documents - View'
+
+        Button:
+            id: doc_0
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_1
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_2
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_3
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_4
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_5
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_6
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_7
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_8
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            id: doc_9
+            text: ''
+            on_press:
+                root.manager.get_screen('listDocs').openDoc(self.text)
+
+        Button:
+            text: 'Back'
+            on_press:
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'prevDocs'
+
+
+        
+
+<webScreen>:
+    GridLayout:
+        cols: 1
+        rows: 3
+
+        Label:
+            text: 'VOIS - Web Search'
+
+        TextInput:
+            text: 'Enter Search'
+            multiline: False
+
+        Button: 
+            text: 'Back'
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'home'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+

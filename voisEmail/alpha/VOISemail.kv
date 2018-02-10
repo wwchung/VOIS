@@ -1,0 +1,186 @@
+<EmailMainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            font_size: 60
+            text: 'VOIS - Email'
+        Button:
+            text: 'COMPOSE'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.current = 'compose'
+                root.manager.get_screen('compose').clear_inputs()
+        Button:
+            text: 'INBOX'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'down'
+                root.manager.current = 'inbox'
+        Button:
+            text: 'SENT MAIL'
+            font_size: 60
+            on_release:
+                root.manager.transition.direction = 'up'
+                root.manager.current = 'sentBox'
+
+
+<ComposeScreen>:
+    GridLayout:
+        cols: 1
+        rows: 3
+        BoxLayout:
+            size_hint: (.1, None)
+            height: 80
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                font_size: 30
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    root.go_back()
+            Button:
+                text: 'Send'
+                size_hint: (.7, None)
+                height: 80
+                font_size: 30
+                on_release:
+                    root.send_email()
+        GridLayout:
+            size_hint: (.1, None)
+            height: 160
+            cols: 2
+            rows: 2
+            Label:
+                size_hint: (.2, None)
+                height: 80
+                font_size: 38
+                text: 'To: '
+            TextInput:
+                id: to_id
+                size_hint: (.2, None)
+                height: 80
+                font_size: 48
+                text: ''
+            Label:
+                size_hint: (.2, None)
+                height: 80
+                font_size: 38
+                text: 'Subject: '
+            TextInput:
+                id: subject_id
+                size_hint: (.8, None)
+                height: 80
+                font_size: 48
+                text: ''
+        TextInput:
+            id: body_id
+
+            text: ''
+
+<InboxScreen>:
+    on_enter:
+        root.get_inbox_emails()
+    BoxLayout:
+        id: box_id
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            Button:
+                size_hint: (.3, None)
+                text: 'Back'
+                height: 80
+                on_release:
+                    root.manager.transition.direction = 'up'
+                    root.manager.current = 'emailMain'
+            Button:
+                size_hint: (.7, None)
+                text: 'Refresh'
+                height: 80
+                on_release: root.get_inbox_emails()
+        Label:
+            id: loading_label1
+            text: 'Loading . . .'
+            font_size: 36
+
+
+<SentBoxScreen>:
+    on_enter:
+        root.get_sent_emails()
+    BoxLayout:
+        id: sent_box_id
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                on_release:
+                    root.manager.transition.direction = 'down'
+                    root.manager.current = 'emailMain'
+            Button:
+                text: 'Refresh'
+                size_hint: (.7, None)
+                height: 80
+                on_release: root.get_sent_emails()
+        Label:
+            id: loading_label2
+            text: 'Loading . . .'
+            font_size: 36
+
+
+<MessageScreen>:
+    on_enter:
+        root.manager.transition.direction = 'right'
+    on_leave: root.manager.transition.direction = 'left'
+    GridLayout:
+        cols: 1
+        rows: 3
+        BoxLayout:
+            size_hint: (1, None)
+            height: 80
+            id: message_btns
+            Button:
+                text: 'Back'
+                size_hint: (.3, None)
+                height: 80
+                on_release:
+                    root.go_back()
+            Button:
+                id: compose_btn
+                text: 'Reply'
+                size_hint: (.7, None)
+                height: 80
+        GridLayout:
+            size_hint: (.1, None)
+            height: 160
+            cols: 2
+            rows: 2
+            Label:
+                size_hint: (.2, None)
+                text: 'From:'
+                height: 80
+            Label:
+                id: address_view_id
+                size_hint: (.8, None)
+                text: ''
+                text_size: self.width, None
+                height: 80
+            Label:
+                size_hint: (.2, None)
+                text: 'Subject:'
+                height: 80
+            Label:
+                id: subject_view_id
+                size_hint: (.8, None)
+                text: ''
+                text_size: self.width, None
+                height: 80
+        TextInput:
+            id: body_view_id
+            text: '1'
+            font_size: 30

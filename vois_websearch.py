@@ -25,7 +25,6 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 # chrome_path = '/usr/bin/google-chrome %s'
 
 
-
 class SearchScreen(Screen):
 
 	search_input = ObjectProperty(None)
@@ -42,10 +41,13 @@ class SearchScreen(Screen):
 				html = response.read()
 
 			soup = BeautifulSoup(html, 'html.parser')
-			for title in soup.find_all('h3', class_='r', limit=1):
-				url = str(title).split('/url?q=')[1].split('&amp')[0]
-				webbrowser.get(chrome_path).open(url)
-				break
+			for title in soup.find_all('h3', class_='r'):
+				try:
+					url = str(title).split('/url?q=')[1].split('&amp')[0]
+					webbrowser.get(chrome_path).open(url)
+					break
+				except IndexError:
+					pass
 
 		except Exception as e:
 			print(str(e))

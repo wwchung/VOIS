@@ -337,6 +337,7 @@
             Button:
                 text: 'Back'
                 on_press:
+                    root.manager.get_screen('newDocs').clearInput()
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'docs'
 
@@ -385,6 +386,7 @@
             Button:
                 text: 'Back'
                 on_press:
+                    root.manager.get_screen('prevDocs').clearInput()
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'docs'
 

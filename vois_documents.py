@@ -182,7 +182,12 @@ class docsScreen(Screen):
 
 #Previous documents menu Screen
 class prevDocsScreen(Screen):
+    
+    #Clears text input
+    def clearInput(self):
+        self.ids.prev_folder_id.text = ''
 
+    #Searches for word documents in a specific folder
     def byFolder(self,folder_name):
 
         #Check to see if the folder exists first. If not, display that the folder doesn't exist
@@ -190,7 +195,7 @@ class prevDocsScreen(Screen):
             self.ids.prev_folder_id.text = 'Error: The Specified Folder Does Not Exist'
             return
         else:
-            self.ids.prev_folder_id.text = ''
+            self.clearInput()
             self.manager.get_screen('listDocs').byFolder(folder_name)
             self.manager.transition.direction = 'left'
             self.manager.current = 'listDocs'

@@ -247,6 +247,7 @@ class listDocsScreen(Screen):
                 doc_id = 'doc_' + str(i)
 
                 self.ids[doc_id].text = self.findDoc(paths[i])
+                self.ids[doc_id].font_name = 'FZHTK'
 
         else:
             for i in range(len(paths)):

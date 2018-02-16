@@ -14,203 +14,32 @@ from docx import Document
 
 #Import our features
 
-
-#Phone files
-import vois_documents as docs
-
-
-
-
-
 #Email files
-
-
-
-#Documents files
 import vois_email
 
-
-
-
+#Document files
+import vois_documents
 
 #Web files
 import vois_websearch
 
 
-
-#import documents as docs
-
-
-
-# Create all possible screens. Use root.manager.current to control screens
+# Create all possible screens
 Builder.load_file('interface.kv')
 
-# Declare All Screens
+#Define home Screen
 class homeScreen(Screen):
 
     #Quits the app
     def quit(self):
         App.get_running_app().stop()
 
-    pass
-
+#Define phone Screen
 class phoneScreen(Screen):
 
     def printForm(self,value):
         print('You entered:', value)
 
-
-
-
-
-
-
-
-
-
-
-
-class emailScreen(Screen):
-    pass
-
-
-
-
-
-
-
-
-#Document home Screen
-class docsScreen(Screen):
-    pass
-
-#Previous documents menu Screen
-class prevDocsScreen(Screen):
-
-    def byFolder(self,folder_name):
-
-        #Check to see if the folder exists first. If not, display that the folder doesn't exist
-        if not docs.folderExists(folder_name):
-            self.ids.prev_folder_id.text = 'Error: The Specified Folder Does Not Exist'
-            return
-        else:
-            self.ids.prev_folder_id.text = ''
-            sm.get_screen('listDocs').byFolder(folder_name)
-            sm.transition.direction = 'left'
-            sm.current = 'listDocs'
-
-    pass
-
-#Create new document Screen
-class newDocsScreen(Screen):
-
-    #Clears the folder and document text input
-    def clearInput(self):
-        self.ids.new_folder_id.text = ''
-        self.ids.new_doc_id.text = ''
-
-    #Will create a new document within the specified folder
-    def newDoc(self,folder_name, doc_name):
-
-        if docs.fileExists(folder_name,doc_name):
-            self.ids.new_doc_id.text = 'Error: File Already Exists'
-            return
-
-
-        docs.newDoc(folder_name,doc_name)
-        self.clearInput()
-
-        sm.transition.direction = 'right'
-        sm.current = 'docs'
-
-    pass
-
-#Screen where previous documents show up
-class listDocsScreen(Screen):
-
-    data = {} #Maps files to their full path. Useful because don't want to display full path to user, but need it to open file
-    # (ex: Essay.docx) maps to (ex: Desktop/folder1/Essay.docx)
-
-    #Sets all Button text to empty
-    def clearButtons(self):
-
-        for i in range(10):
-            doc_id = 'doc_' + str(i)
-            self.ids[doc_id].text = ''
-
-    #Given a full path, will find the file that it corresponds to using the self.data map
-    def findDoc(self,target_path):
-        for doc,path in self.data.items():
-            if path == target_path:
-                return doc
-
-    #Populates button text with file names
-    def setButtonText(self,paths):
-
-        #Only show the first 10 results
-        if len(paths) > 10:
-            for i in range(10):
-                doc_id = 'doc_' + str(i)
-
-                self.ids[doc_id].text = self.findDoc(paths[i])
-
-        else:
-            for i in range(len(paths)):
-                doc_id = 'doc_' + str(i)
-                self.ids[doc_id].text = self.findDoc(paths[i])
-
-
-
-    #Gets all word documents within a specific folder and displays them to the screen
-    def byFolder(self,folder_name):
-
-        self.clearButtons() #Clear previous Button text
-
-        #Set title
-        if folder_name != '':
-            self.ids.title.text = 'VOIS - Documents - Previous Documents - ' + folder_name
-        else:
-            self.ids.title.text = 'VOIS - Documents - Previous Documents - Desktop'
-
-        paths,self.data = docs.searchDirectory(folder_name)
-
-        self.setButtonText(paths)
-
-    #Gets top ten most recently modified documents and displays them to the screen
-    def topTen(self):
-
-        self.clearButtons() #Clear previous Button text
-        self.ids.title.text = 'VOIS - Documents - Previous Documents - Top 10' #Set title
-
-        paths,self.data = docs.topTenPrevDocs()
-
-        self.setButtonText(paths)
-
-
-
-    #Uses documents code to open a file with the given document name. Switches screen to prevDocs Screen if clikcs on valid button.
-    def openDoc(self,doc_name):
-
-        #If there is nothing to open, return without changing the screen.
-        if doc_name == '':
-            return
-
-        #If this is a valid word document, open it
-        if '.docx' in doc_name:
-
-            sm.transition.direction = 'right'
-            sm.current = 'prevDocs'
-
-            file = self.data[doc_name]
-            file = file.replace('.docx','',1) #Extract the docx off of the file
-
-            docs.openDoc(file) #Use the document name to retrieve the full path to the file and open it
-
-    pass
-
-
-class webScreen(Screen):
-    pass
 
 # Create the screen manager
 sm = ScreenManager()
@@ -226,12 +55,12 @@ sm.add_widget(vois_email.SentBoxScreen(name='sentBox'))
 
 
 #Add All documents Screens
-sm.add_widget(docsScreen(name='docs'))
-sm.add_widget(newDocsScreen(name='newDocs'))
-sm.add_widget(prevDocsScreen(name='prevDocs'))
-sm.add_widget(listDocsScreen(name='listDocs'))
+sm.add_widget(vois_documents.docsScreen(name='docs'))
+sm.add_widget(vois_documents.newDocsScreen(name='newDocs'))
+sm.add_widget(vois_documents.prevDocsScreen(name='prevDocs'))
+sm.add_widget(vois_documents.listDocsScreen(name='listDocs'))
 
-
+#Add all web search screens
 sm.add_widget(vois_websearch.SearchScreen(name='search'))
 sm.add_widget(vois_websearch.ResultScreen(name='result'))
 

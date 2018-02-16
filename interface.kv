@@ -73,19 +73,19 @@
             text: 'INBOX'
             font_size: 60
             on_release:
-                root.manager.transition.direction = 'down'
+                root.manager.transition.direction = 'left'
                 root.manager.current = 'inbox'
         Button:
             text: 'SENT MAIL'
             font_size: 60
             on_release:
-                root.manager.transition.direction = 'up'
+                root.manager.transition.direction = 'left'
                 root.manager.current = 'sentBox'
         Button:
             text: 'BACK'
             font_size: 60
             on_release:
-                root.manager.transition.direction = 'up'
+                root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
 
 
@@ -157,7 +157,7 @@
                 text: 'Back'
                 height: 80
                 on_release:
-                    root.manager.transition.direction = 'up'
+                    root.manager.transition.direction = 'right'
                     root.manager.current = 'emailMain'
             Button:
                 size_hint: (.7, None)
@@ -184,7 +184,7 @@
                 size_hint: (.3, None)
                 height: 80
                 on_release:
-                    root.manager.transition.direction = 'down'
+                    root.manager.transition.direction = 'right'
                     root.manager.current = 'emailMain'
             Button:
                 text: 'Refresh'
@@ -248,18 +248,6 @@
             id: body_view_id
             text: '1'
             font_size: 30
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -349,6 +337,7 @@
             Button:
                 text: 'Back'
                 on_press:
+                    root.manager.get_screen('newDocs').clearInput()
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'docs'
 
@@ -397,12 +386,14 @@
             Button:
                 text: 'Back'
                 on_press:
+                    root.manager.get_screen('prevDocs').clearInput()
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'docs'
 
 
 <listDocsScreen>
     GridLayout:
+
         cols: 1
         rows: 12
 
@@ -526,7 +517,9 @@
         Button:
             text: "Back"
             font_size: 56
-            on_press: root.manager.current = 'home'
+            on_press: 
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'home'
 
             
 <ResultScreen>:

@@ -17,6 +17,7 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
+from kivy.uix.popup import Popup
 from kivy.core.text.markup import MarkupLabel
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
@@ -27,17 +28,28 @@ from email.utils import parseaddr
 from kivy.uix.scrollview import ScrollView
 
 
-credentials = get_credentials()
-http = credentials.authorize(httplib2.Http())
-SERVICE = discovery.build('gmail', 'v1', http=http)
+SERVICE = None
+try:
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    SERVICE = discovery.build('gmail', 'v1', http=http)
 
-# Default the sender to be the authenticated user
-results = SERVICE.users().getProfile(userId='me').execute()
-SENDER = results.get('emailAddress', [])
+    # Default the sender to be the authenticated user
+    results = SERVICE.users().getProfile(userId='me').execute()
+    SENDER = results.get('emailAddress', [])
+except Exception as error:
+    SERVICE = None
+    print ("Error has occured: ", str(error))
 
 
 # Builder.load_file('VOISemail.kv')
-
+def check_internet():
+    if SERVICE is None:
+        ti = TextInput(text="Please check your Internet and restart VOIS",
+                       size_hint=(None, None), size=(300, 300))
+        pop = Popup(title='Error', content=ti,
+                    size_hint=(None, None), size=(400, 400))
+        pop.open()
 
 class EmailMainScreen(Screen):
     pass
@@ -70,6 +82,7 @@ class ComposeScreen(Screen):
 
 
     def send_email(self):
+        check_internet()
         recievers = self.ids.to_id.text
         subject = self.ids.subject_id.text
         body = self.ids.body_id.text
@@ -77,9 +90,16 @@ class ComposeScreen(Screen):
             [x.strip() for x in recievers.split(';')]
             recievers = recievers.split(';')
             message = CreateMessage(SENDER, recievers, subject, body)
-            if SendMessage(SERVICE, "me", message):
+            success, message = SendMessage(SERVICE, "me", message)
+            if success:
                 self.manager.current = 'emailMain'
                 self.manager.transition.direction = 'down'
+            else:
+                ti = TextInput(text=message, size_hint=(None, None),
+                           size=(300, 300))
+                pop = Popup(title='Error', content=ti,
+                            size_hint=(None, None), size=(400, 400))
+                pop.open()
 
 
 def shrink_it(text, length):
@@ -98,6 +118,9 @@ class InboxScreen(Screen):
         self.email_btns.clear()
 
     def get_inbox_emails(self):
+        check_internet()
+        if SERVICE is None:
+            return
         self.clear_emails()
         messages = GetInboxMessages(SERVICE)
         if self.loading_label:
@@ -151,6 +174,9 @@ class SentBoxScreen(Screen):
 
 
     def get_sent_emails(self):
+        check_internet()
+        if SERVICE is None:
+            return
         self.clear_emails()
         messages = GetSentMessages(SERVICE)
         if self.loading_label:
@@ -195,6 +221,9 @@ class MessageScreen(Screen):
         self.manager.current = self.back_screen
 
     def dispay_message(self, msg_info, from_sentemail=False, instance=None):
+        check_internet()
+        if SERVICE is None:
+            return
         if from_sentemail:
             self.back_screen = 'sentBox'
             self.ids.compose_btn.text = 'Forward'

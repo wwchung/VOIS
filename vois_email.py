@@ -6,7 +6,7 @@ from gmail.send_email import CreateMessage
 from gmail.send_email import SendMessage
 
 import httplib2
-from apiclient import discovery
+from googleapiclient.discovery import build
 
 import kivy
 kivy.require('1.0.6') # replace with your current kivy version !
@@ -32,7 +32,7 @@ SERVICE = None
 try:
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
-    SERVICE = discovery.build('gmail', 'v1', http=http)
+    SERVICE = build('gmail', 'v1', http=http)
 
     # Default the sender to be the authenticated user
     results = SERVICE.users().getProfile(userId='me').execute()

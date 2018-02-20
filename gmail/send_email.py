@@ -10,7 +10,7 @@ from email.mime.text import MIMEText
 import mimetypes
 import os
 
-from apiclient import errors
+from googleapiclient import errors
 
 
 def SendMessage(service, user_id, message):

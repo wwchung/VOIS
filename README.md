@@ -1,6 +1,18 @@
 # VOIS
 
-Google Email account:
+Following these instructions to start the `VOIS` app:
 
-email: eecs498.vois@gmail.com
-pass:  umichvois
+#### Package Installations:
+~~~
+$ install_packages.sh
+~~~
+
+#### Start the VOIS app:
+~~~
+$ python3 interface.py
+~~~
+
+#### Gmail account used to access the inbox:
+
+EMAIL_ADDRESS:  `eecs498.vois@gmail.com`
+PASSWORD:       `umichvois`

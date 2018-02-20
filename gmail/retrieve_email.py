@@ -1,6 +1,6 @@
 import base64
 import email
-from apiclient import errors
+from googleapiclient import errors
 from bs4 import BeautifulSoup
 
 def GetMessage(service, msg_id, user_id="me", format="full"):

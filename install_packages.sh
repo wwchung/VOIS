@@ -14,5 +14,3 @@ pip install --upgrade google-api-python-client
 pip install oauth2client
 
 pip install arrow
-
-pip install docx

@@ -23,11 +23,7 @@ def call(voice):
 
     voice.call('+1'+outgoing, '+17345854520')
 
-def text(voice,outgoing,message):
-    voice.send_sms('+1' + outgoing, message)
 
-
-voice = Voice()
-login(voice)
-
-call(voice)
+voice = Voice() #Create new voice object
+login(voice) #Login to our google account
+call(voice) #Call number

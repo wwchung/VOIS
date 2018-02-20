@@ -7,8 +7,7 @@ Documents feature backend
 '''
 
 
-import os, sys, subprocess, glob
-from docx import Document
+import os, sys, subprocess
 import time
 from kivy.uix.screenmanager import ScreenManager, Screen
 
@@ -91,19 +90,17 @@ def openDoc(doc_name):
 
 #Will create an open a new document within the specified folder with doc_name. Will save the document to the desktop if no folder name given
 def newDoc(folder_name,doc_name):
+    path = createPath(folder_name) #Get the path to save to
+    #If this folder doesn't exist, then create a new folder
+    if not folderExists(folder_name):
+        os.makedirs(path)
 
-	path = createPath(folder_name) #Get the path to save to
+    new_file = path + doc_name #Construct new file name
+    f = open(new_file + '.docx','w')
+    f.close()
 
-	#If this folder doesn't exist, then create a new folder
-	if not folderExists(folder_name):
-		os.makedirs(path)
-
-	new_file = path + doc_name #Construct new file name
-
-	#Now create the new document and save it to the constructed path
-	new = Document()
-	new.save(new_file + '.docx')
-	openDoc(new_file) #Open it
+    #Create new document and save it to the constructed path
+    openDoc(new_file) #Open it
 
 
 

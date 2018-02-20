@@ -36,25 +36,25 @@ class homeScreen(Screen):
 
 #Define phone Screen
 class phoneHome(Screen):
-    
+
 	pass
-    
+
 
 class callScreen(Screen):
-	
+
     def clearInputs(self):
         self.ids.number_input = ''
 
     def call(self,number):
         print('Calling phone')
 
-        os.system('python2 vois_call.py ' + number) #Run python script to call
+        os.system('python vois_call.py ' + number) #Run python script to call
 
         #Clear inputs and return to home screen
         self.clearInputs()
         self.manager.transition.direction = 'right'
         self.manager.current = 'phoneHome'
-        
+
 
 class textScreen(Screen):
 
@@ -63,7 +63,7 @@ class textScreen(Screen):
 		self.ids.number_input = ''
 		self.ids.message_input = ''
 
-	
+
 	def text(self,number,message):
 		print('Sending text message')
 
@@ -71,13 +71,13 @@ class textScreen(Screen):
 
 		print("message:", message)
 
-		os.system('python2 vois_text.py ' + number + ' ' + message) #Run python script to text
+		os.system('python vois_text.py ' + number + ' ' + message) #Run python script to text
 
 		#Clear inputs and return to call screen
 		self.clearInputs()
 		self.manager.transition.direction = 'right'
 		self.manager.current = 'phoneHome'
-		
+
 
 
 # Create the screen manager

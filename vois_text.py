@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 # GOOGLE VOICE NUMBER ----------- 734-506-8603 -----------
 
 
@@ -28,7 +28,3 @@ login(voice)
 text(voice)
 
 #text(voice,'7345854520','testing from Aki')
-
-
-
-

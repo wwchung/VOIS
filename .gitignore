@@ -1,2 +1,1 @@
-/__pycache__/
-/gmail/__pycache__/
+*.pyc

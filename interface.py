@@ -48,7 +48,7 @@ class callScreen(Screen):
     def call(self,number):
         print('Calling phone')
 
-        os.system('python vois_call.py ' + number) #Run python script to call
+        os.system('./vois_call.py ' + number) #Run python script to call
 
         #Clear inputs and return to home screen
         self.clearInputs()
@@ -71,7 +71,7 @@ class textScreen(Screen):
 
 		print("message:", message)
 
-		os.system('python vois_text.py ' + number + ' ' + message) #Run python script to text
+		os.system('./vois_text.py ' + number + ' ' + message) #Run python script to text
 
 		#Clear inputs and return to call screen
 		self.clearInputs()

@@ -88,7 +88,7 @@ class ResultScreen(Screen):
 
 			i = 0
 			for snippet in soup.find_all('span', class_='st'):
-				results[i]['snippet'] = snippet.text
+				results[i]['snippet'] = snippet.text[:72] + '...'
 				i += 1
 
 		except Exception as e:

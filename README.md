@@ -14,5 +14,5 @@ $ python3 interface.py
 
 #### Gmail account used to access the inbox:
 
-EMAIL_ADDRESS:  `eecs498.vois@gmail.com` \n
+EMAIL_ADDRESS:  `eecs498.vois@gmail.com`<br/>
 PASSWORD:       `umichvois`

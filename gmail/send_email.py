@@ -29,9 +29,9 @@ def SendMessage(service, user_id, message):
       message = service.users().messages().send(userId=user_id, body=message)\
                 .execute()
       # print ('Message Id: %s' % message['id'])
-      return message
+      return True, message
   except errors.HttpError as error:
-      print ('An error occurred: %s' % error)
+      return False, ('An error occurred: %s' % error)
 
 
 def CreateMessage(sender, to, subject, message_text):

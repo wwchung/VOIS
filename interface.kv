@@ -10,7 +10,7 @@
             text: 'Phone'
             on_press:
                 root.manager.transition.direction = 'left'
-                root.manager.current = 'phone'
+                root.manager.current = 'phoneHome'
 
         Button:
             text: 'Email'
@@ -34,7 +34,7 @@
             text: 'Exit'
             on_press: root.manager.get_screen('home').quit()
 
-<phoneScreen>:
+<phoneHome>:
     GridLayout:
         cols: 1
         rows: 3
@@ -42,10 +42,21 @@
         Label:
             text: 'VOIS - Phone'
 
-        TextInput:
-            text: 'Enter Number'
-            multiline: False
-            on_text_validate: root.manager.get_screen('phone').printForm(self.text)
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            Button:
+                text: 'Call'
+                on_press:
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'call'
+
+            Button: 
+                text: 'Text'
+                on_press:
+                    root.manager.transition.direction = 'left'
+                    root.manager.current = 'text'
 
         Button:
             text: 'Back'
@@ -53,6 +64,78 @@
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
 
+<callScreen>:
+    GridLayout:
+        cols: 1
+        rows: 3
+
+        Label:
+            text: 'VOIS - Phone - Call'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            Label:
+                text: 'Enter Number'
+
+            TextInput:
+                id: number_input
+                text: ''
+                multiline: False
+                on_text_validate: 
+                    root.manager.get_screen('call').call(self.text)
+
+
+        Button:
+            text: 'Back'
+            on_press:
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'phoneHome'
+
+
+
+<textScreen>:
+    GridLayout:
+        cols: 1
+        rows: 4
+
+        Label: 
+            text: 'VOIS - Phone - Text'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+
+            Label:
+                text: 'Enter Number'
+
+            Label:
+                text: 'Enter Message'
+
+        GridLayout:
+            cols: 2
+            rows: 1
+
+            TextInput:
+                id: number_input
+                text: ''
+                multiline: False
+
+            TextInput:
+                id: message_input
+                text: ''
+                multiline: False
+                on_text_validate:
+                    root.manager.get_screen('text').text(root.manager.get_screen('text').ids.number_input.text,self.text)
+
+
+        Button:
+            text: 'Back'
+            on_press:
+                root.manager.transition.direction = 'right'
+                root.manager.current = 'phoneHome'
 
 
 

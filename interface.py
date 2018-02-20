@@ -35,16 +35,59 @@ class homeScreen(Screen):
         App.get_running_app().stop()
 
 #Define phone Screen
-class phoneScreen(Screen):
+class phoneHome(Screen):
+    
+	pass
+    
 
-    def printForm(self,value):
-        print('You entered:', value)
+class callScreen(Screen):
+	
+    def clearInputs(self):
+        self.ids.number_input = ''
+
+    def call(self,number):
+        print('Calling phone')
+
+        os.system('python2 vois_call.py ' + number) #Run python script to call
+
+        #Clear inputs and return to home screen
+        self.clearInputs()
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'phoneHome'
+        
+
+class textScreen(Screen):
+
+	def clearInputs(self):
+
+		self.ids.number_input = ''
+		self.ids.message_input = ''
+
+	
+	def text(self,number,message):
+		print('Sending text message')
+
+		print("number:", number)
+
+		print("message:", message)
+
+		os.system('python2 vois_text.py ' + number + ' ' + message) #Run python script to text
+
+		#Clear inputs and return to call screen
+		self.clearInputs()
+		self.manager.transition.direction = 'right'
+		self.manager.current = 'phoneHome'
+		
 
 
 # Create the screen manager
 sm = ScreenManager()
 sm.add_widget(homeScreen(name='home'))
-sm.add_widget(phoneScreen(name='phone'))
+
+#Add all phone screens
+sm.add_widget(phoneHome(name='phoneHome'))
+sm.add_widget(callScreen(name='call'))
+sm.add_widget(textScreen(name='text'))
 
 #Add all email screens
 sm.add_widget(vois_email.EmailMainScreen(name='emailMain'))

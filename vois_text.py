@@ -22,9 +22,6 @@ def text(voice):
     voice.send_sms('+1' + outgoing, message) #Send message
 
 
-voice = Voice()
-login(voice)
-
-text(voice)
-
-#text(voice,'7345854520','testing from Aki')
+voice = Voice() #Create new voice object
+login(voice) #Login to google Account
+text(voice) #Send text message 

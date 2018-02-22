@@ -115,7 +115,7 @@ class InboxScreen(Screen):
     def clear_emails(self):
         for btn in self.email_btns:
             self.ids.box_id.remove_widget(btn)
-        self.email_btns.clear()
+        del self.email_btns[:]
 
     def get_inbox_emails(self):
         check_internet()
@@ -171,7 +171,7 @@ class SentBoxScreen(Screen):
     def clear_emails(self):
         for btn in self.email_btns:
             self.ids.sent_box_id.remove_widget(btn)
-        self.email_btns.clear()
+        del self.email_btns[:]
 
 
     def get_sent_emails(self):
@@ -198,7 +198,7 @@ class SentBoxScreen(Screen):
             dispay_text = "[size=18sp][b]" + str(len(self.email_btns) + 1) + ". [b][/size]" + \
             "[font=FZHTK][size=16sp]" + sender + "[/size]    - " + \
             "[size=16sp]   " + human_time + \
-            "[/size]\n[size16sp40][b]" + subject + "[/b][/size]\n[size=16sp]" + \
+            "[/size]\n[size=16sp][b]" + subject + "[/b][/size]\n[size=16sp]" + \
             snippet + "[/size]"
 
             btn = Button(text=dispay_text, markup=True, halign='left')

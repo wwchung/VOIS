@@ -12,7 +12,8 @@ $ ./install_packages.sh
 $ python3 interface.py
 ~~~
 
-#### Gmail account used to access the inbox:
+#### Gmail account used to access email:
+Please check the comment section in Canvas assignment submission.
 
-EMAIL_ADDRESS:  `eecs498.vois@gmail.com`<br/>
-PASSWORD:       `umichvois`
+#### Note:
+The `VOIS` app only works on macOS due to chrome_path in vois_websearch.py.

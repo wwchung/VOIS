@@ -26,12 +26,11 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
 
 class SearchScreen(Screen):
-
+	
 	search_input = ObjectProperty(None)
 
 	def im_feeling_lucky(self):
 		search_url = google_url + self.search_input.text.replace(' ', '+')
-
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
 			headers = {'User-Agent': user_agent}
@@ -48,21 +47,18 @@ class SearchScreen(Screen):
 					break
 				except IndexError:
 					pass
-
 		except Exception as e:
 			print(str(e))
 
 
 class ResultScreen(Screen):
 
-	button1 = ObjectProperty(None)
-	button2 = ObjectProperty(None)
-	button3 = ObjectProperty(None)
-	button4 = ObjectProperty(None)
-	button5 = ObjectProperty(None)
+	grid = ObjectProperty(None)
+	buttons = []
 
 	def show_result(self):
 		search_url = google_url + self.manager.get_screen('search').search_input.text.replace(' ', '+')
+		results = []
 
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
@@ -72,57 +68,41 @@ class ResultScreen(Screen):
 			with urllib.request.urlopen(req) as response:
 				html = response.read()
 
-			results = []
-
 			soup = BeautifulSoup(html, 'html.parser')
-			for title in soup.find_all('h3', class_='r'):
-				results.append({'title': '', 'url': '', 'snippet': ''})
-
+			for result in soup.find_all('div', class_='g'):
 				try:
+					title = result.find('h3', class_='r')
 					url = str(title).split('/url?q=')[1].split('&amp')[0]
-					results[-1]['title'] = title.text
-					results[-1]['url'] = url
-
+					if len(url) > 72:
+						url = url[:72] + '...'
+					snippet = result.find('span', class_='st')
+					if len(snippet.text) > 72:
+						snippet = snippet.text[:72] + '...'
+					results.append({'title': title.text, 'url': url, 'snippet': snippet})
 				except IndexError:
 					pass
-
-			i = 0
-			for snippet in soup.find_all('span', class_='st'):
-				results[i]['snippet'] = snippet.text[:72] + '...'
-				i += 1
 
 		except Exception as e:
 			print(str(e))
 
-		i = 0
-		for result in results:
-			if result['title'] != '':
-				if i == 1:
-					self.button1.text = '1. ' + result['title'] + '\n' + result['url'] + '\n' + result['snippet']
-					self.button1.bind(on_press=partial(self.open_url, result['url']))
-				elif i == 2:
-					self.button2.text = '2. ' + result['title'] + '\n' + result['url'] + '\n' + result['snippet']
-					self.button2.bind(on_press=partial(self.open_url, result['url']))
-				elif i == 3:
-					self.button3.text = '3. ' + result['title'] + '\n' + result['url'] + '\n' + result['snippet']
-					self.button3.bind(on_press=partial(self.open_url, result['url']))
-				elif i == 4:
-					self.button4.text = '4. ' + result['title'] + '\n' + result['url'] + '\n' + result['snippet']
-					self.button4.bind(on_press=partial(self.open_url, result['url']))
-				elif i == 5:
-					self.button5.text = '5. ' + result['title'] + '\n' + result['url'] + '\n' + result['snippet']
-					self.button5.bind(on_press=partial(self.open_url, result['url']))
-				i += 1
+		for i in range(5):
+			self.buttons[i].text = str(i + 1) + '. ' + results[i]['title'] + '\n' + results[i]['url'] + '\n' + results[i]['snippet']
+			self.buttons[i].bind(on_press=partial(self.open_url, results[i]['url']))
 
 	def open_url(self, url, object):
 		webbrowser.get(chrome_path).open(url)
 
-	def reset(self):
-		self.button1.text = 'Loading...'
-		self.button2.text = 'Loading...'
-		self.button3.text = 'Loading...'
-		self.button4.text = 'Loading...'
-		self.button5.text = 'Loading...'
+	def set_buttons(self):
+		for i in range(5):
+			btn = Button(text='Loading...', font_size='16sp')
+			self.buttons.append(btn)
+			self.grid.add_widget(btn)
+
+	def clear_buttons(self):
+		for btn in self.buttons:
+			self.grid.remove_widget(btn)
+		self.buttons.clear()
+
 
 sm = ScreenManager()
 sm.add_widget(SearchScreen(name='search'))

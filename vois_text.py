@@ -16,12 +16,21 @@ def login(voice):
 
 
 def text(voice):
+    if len(sys.argv) != 3:
+        print("Error: outgoing number or message must be specified")
+        return
+
     outgoing = sys.argv[1] #Get outgoing number
+    if len(outgoing) != 10 or not outgoing.isdigit():
+        print("Error: outgoing number is not a proper ten digit number")
+        return
+
     message = sys.argv[2:] #Get message
+
     message = ' '.join(message) #Turn message into string
     voice.send_sms('+1' + outgoing, message) #Send message
 
 
 voice = Voice() #Create new voice object
 login(voice) #Login to google Account
-text(voice) #Send text message 
+text(voice) #Send text message

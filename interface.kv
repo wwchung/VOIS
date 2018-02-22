@@ -575,9 +575,7 @@
 		    Button:
 		    	text: 'Search'
 		    	font_size: '28sp'
-		        on_press:
-		        	root.manager.transition.direction = 'left'
-		        	root.manager.current = 'result'
+		        on_press: root.search()
 		    Button:
 		    	text: "I'm Feeling Lucky"
 		    	font_size: '28sp'

@@ -26,18 +26,17 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
 
 class SearchScreen(Screen):
-	
+
 	search_input = ObjectProperty(None)
 
 	def search(self):
 		if self.search_input.text:
-			self.manager.transition ='left'
 			self.manager.current = 'result'
 
 	def im_feeling_lucky(self):
 		if self.search_input.text == '':
 			return
-			
+
 		search_url = google_url + self.search_input.text.replace(' ', '+')
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'

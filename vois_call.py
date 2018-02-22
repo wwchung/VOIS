@@ -16,13 +16,9 @@ def login(voice):
 
 
 def call(voice):
-    if len(sys.argv) != 2:
-        print("Error: outgoing number must be specified")
-        return
-
     outgoing = sys.argv[1]
 
-    if not sys.argv[1] or len(sys.argv[1]) != 10 or not sys.argv[1].isdigit():
+    if len(sys.argv[1]) != 10 or not sys.argv[1].isdigit():
         print("Error: outgoing number is not a proper ten digit number")
         return
 

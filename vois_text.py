@@ -16,11 +16,8 @@ def login(voice):
 
 
 def text(voice):
-    if len(sys.argv) != 3:
-        print("Error: outgoing number or message must be specified")
-        return
-
     outgoing = sys.argv[1] #Get outgoing number
+    
     if len(outgoing) != 10 or not outgoing.isdigit():
         print("Error: outgoing number is not a proper ten digit number")
         return

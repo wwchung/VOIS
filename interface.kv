@@ -4,33 +4,39 @@
         rows: 6
 
         Label:
+            font_size: '48sp'
             text: 'Welcome to VOIS'
 
         Button:
+            font_size: '40sp'
             text: 'Phone'
             on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'phoneHome'
 
         Button:
+            font_size: '40sp'
             text: 'Email'
             on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'emailMain'
 
         Button:
+            font_size: '40sp'
             text: 'Documents'
             on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'docs'
 
         Button:
+            font_size: '40sp'
             text: 'Web Search'
             on_press:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'search'
 
         Button:
+            font_size: '40sp'
             text: 'Exit'
             on_press: root.manager.get_screen('home').quit()
 
@@ -52,7 +58,7 @@
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'call'
 
-            Button: 
+            Button:
                 text: 'Text'
                 on_press:
                     root.manager.transition.direction = 'left'
@@ -83,7 +89,7 @@
                 id: number_input
                 text: ''
                 multiline: False
-                on_text_validate: 
+                on_text_validate:
                     root.manager.get_screen('call').call(self.text)
 
 
@@ -100,7 +106,7 @@
         cols: 1
         rows: 4
 
-        Label: 
+        Label:
             text: 'VOIS - Phone - Text'
 
         GridLayout:
@@ -143,30 +149,30 @@
     BoxLayout:
         orientation: 'vertical'
         Label:
-            font_size: 60
+            font_size: '40sp'
             text: 'VOIS - Email'
         Button:
             text: 'COMPOSE'
-            font_size: 60
+            font_size: '40sp'
             on_release:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'compose'
                 root.manager.get_screen('compose').clear_inputs()
         Button:
             text: 'INBOX'
-            font_size: 60
+            font_size: '40sp'
             on_release:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'inbox'
         Button:
             text: 'SENT MAIL'
-            font_size: 60
+            font_size: '40sp'
             on_release:
                 root.manager.transition.direction = 'left'
                 root.manager.current = 'sentBox'
         Button:
             text: 'BACK'
-            font_size: 60
+            font_size: '40sp'
             on_release:
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
@@ -178,48 +184,48 @@
         rows: 3
         BoxLayout:
             size_hint: (.1, None)
-            height: 80
+            height: 60
             Button:
                 text: 'Back'
                 size_hint: (.3, None)
-                height: 80
-                font_size: 30
+                height: 60
+                font_size: '32sp'
                 on_release:
                     root.manager.transition.direction = 'right'
                     root.go_back()
             Button:
                 text: 'Send'
                 size_hint: (.7, None)
-                height: 80
-                font_size: 30
+                height: 60
+                font_size: '32sp'
                 on_release:
                     root.send_email()
         GridLayout:
             size_hint: (.1, None)
-            height: 160
+            height: 120
             cols: 2
             rows: 2
             Label:
                 size_hint: (.2, None)
-                height: 80
-                font_size: 38
+                height: 60
+                font_size: '32sp'
                 text: 'To: '
             TextInput:
                 id: to_id
                 size_hint: (.2, None)
-                height: 80
-                font_size: 48
+                height: 60
+                font_size: '32sp'
                 text: ''
             Label:
                 size_hint: (.2, None)
-                height: 80
-                font_size: 38
+                height: 60
+                font_size: '32sp'
                 text: 'Subject: '
             TextInput:
                 id: subject_id
                 size_hint: (.8, None)
-                height: 80
-                font_size: 48
+                height: 60
+                font_size: '32sp'
                 text: ''
         TextInput:
             id: body_id
@@ -234,23 +240,23 @@
         orientation: 'vertical'
         BoxLayout:
             size_hint: (1, None)
-            height: 80
+            height: 60
             Button:
                 size_hint: (.3, None)
                 text: 'Back'
-                height: 80
+                height: 60
                 on_release:
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'emailMain'
             Button:
                 size_hint: (.7, None)
                 text: 'Refresh'
-                height: 80
+                height: 60
                 on_release: root.get_inbox_emails()
         Label:
             id: loading_label1
             text: 'Loading . . .'
-            font_size: 36
+            font_size: '32sp'
 
 
 <SentBoxScreen>:
@@ -261,23 +267,23 @@
         orientation: 'vertical'
         BoxLayout:
             size_hint: (1, None)
-            height: 80
+            height: 60
             Button:
                 text: 'Back'
                 size_hint: (.3, None)
-                height: 80
+                height: 60
                 on_release:
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'emailMain'
             Button:
                 text: 'Refresh'
                 size_hint: (.7, None)
-                height: 80
+                height: 60
                 on_release: root.get_sent_emails()
         Label:
             id: loading_label2
             text: 'Loading . . .'
-            font_size: 36
+            font_size: '32sp'
 
 
 <MessageScreen>:
@@ -289,48 +295,48 @@
         rows: 3
         BoxLayout:
             size_hint: (1, None)
-            height: 80
+            height: 60
             id: message_btns
             Button:
                 text: 'Back'
                 size_hint: (.3, None)
-                height: 80
+                height: 60
                 on_release:
                     root.go_back()
             Button:
                 id: compose_btn
                 text: 'Reply'
                 size_hint: (.7, None)
-                height: 80
+                height: 60
         GridLayout:
-            size_hint: (.1, None)
-            height: 160
+            size_hint: (1, None)
+            height: 120
             cols: 2
             rows: 2
             Label:
                 size_hint: (.2, None)
                 text: 'From:'
-                height: 80
+                height: 60
             Label:
                 id: address_view_id
                 size_hint: (.8, None)
                 text: ''
                 text_size: self.width, None
-                height: 80
+                height: 60
             Label:
                 size_hint: (.2, None)
                 text: 'Subject:'
-                height: 80
+                height: 60
             Label:
                 id: subject_view_id
                 size_hint: (.8, None)
                 text: ''
                 text_size: self.width, None
-                height: 80
+                height: 60
         TextInput:
             id: body_view_id
             text: '1'
-            font_size: 30
+            font_size: '24sp'
 
 
 
@@ -579,11 +585,11 @@
         Button:
             text: "Back"
             font_size: '28sp'
-            on_press: 
+            on_press:
                 root.manager.transition.direction = 'right'
                 root.manager.current = 'home'
 
-            
+
 <ResultScreen>:
     grid: grid
 	on_pre_enter: root.set_buttons()

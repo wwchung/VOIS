@@ -109,7 +109,7 @@ def shrink_it(text, length):
         return ''
 
 class InboxScreen(Screen):
-    email_btns = set()
+    email_btns = []
     loading_label = True
 
     def clear_emails(self):
@@ -138,13 +138,14 @@ class InboxScreen(Screen):
             snippet = shrink_it(msg.get('snippet'), 80)
             reply = msg.get('reply') if msg.get('reply') else None
 
-            dispay_text = "[font=FZHTK][size=30]" + sender + "    - [/size]" + \
-            "[size=28]   " + human_time + \
-            "[/size]\n[size=40][b]" + subject + "[/b][/size]\n[size=30]" + \
+            dispay_text = "[size=18sp][b]" + str(len(self.email_btns) + 1) + ". [b][/size]" + \
+            "[font=FZHTK][size=16sp]" + sender + "    - [/size]" + \
+            "[size=16sp]   " + human_time + \
+            "[/size]\n[size=16sp][b]" + subject + "[/b][/size]\n[size=16sp]" + \
             snippet + "[/size]"
 
             if 'UNREAD' in msg.get('labels'):
-                dispay_text = '[size=40][b]*NEW*[/b][size=40] ' + dispay_text
+                dispay_text = '[size=16sp][b]*NEW*[/b][size=16sp] ' + dispay_text
 
             btn = Button(text=dispay_text, markup=True, halign='left')
             btn.bind(on_release=partial(self.manager.get_screen('message')\
@@ -160,11 +161,11 @@ class InboxScreen(Screen):
                                       'labels': msg.get('labels')}, False))
             btn.bind(texture_size=btn.setter('size'))
             self.ids.box_id.add_widget(btn)
-            self.email_btns.add(btn)
+            self.email_btns.append(btn)
 
 
 class SentBoxScreen(Screen):
-    email_btns = set()
+    email_btns = []
     loading_label = True
 
     def clear_emails(self):
@@ -194,9 +195,10 @@ class SentBoxScreen(Screen):
             subject = shrink_it(msg.get('subject'), 60)
             snippet = shrink_it(msg.get('snippet'), 80)
 
-            dispay_text = "[font=FZHTK][size=30]" + sender + "[/size]    - " + \
-            "[size=28]   " + human_time + \
-            "[/size]\n[size=40][b]" + subject + "[/b][/size]\n[size=30]" + \
+            dispay_text = "[size=18sp][b]" + str(len(self.email_btns) + 1) + ". [b][/size]" + \
+            "[font=FZHTK][size=16sp]" + sender + "[/size]    - " + \
+            "[size=16sp]   " + human_time + \
+            "[/size]\n[size16sp40][b]" + subject + "[/b][/size]\n[size=16sp]" + \
             snippet + "[/size]"
 
             btn = Button(text=dispay_text, markup=True, halign='left')
@@ -210,7 +212,7 @@ class SentBoxScreen(Screen):
                                       'body': msg.get('body')}, True))
             btn.bind(texture_size=btn.setter('size'))
             self.ids.sent_box_id.add_widget(btn)
-            self.email_btns.add(btn)
+            self.email_btns.append(btn)
 
 
 class MessageScreen(Screen):

@@ -1,46 +1,50 @@
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 import os
 
-#Define phone Screen
-class phoneHome(Screen):
 
+#Define phone Screen
+class PhoneScreen(Screen):
 	pass
 
 
-class callScreen(Screen):
+class CallScreen(Screen):
 
-    def clearInputs(self):
-        self.ids.number_input = ''
+	labels = []
+	
+	def call(self, destination_number):
+		number = '+1 ' + destination_number[:3] + '-' + destination_number[3:6] + '-' + destination_number[6:]
+		self.labels[0].text = 'Calling ' + number + '...'
+		os.system('./vois_call.py ' + destination_number)		# Run python script to call
 
-    def call(self,number):
-        print('Calling phone')
+	def reset_label(self):
+		self.remove_label()
+		lbl = Label(text='', font_size='56sp')
+		self.labels.append(lbl)
+		self.ids.box.add_widget(lbl)
 
-        os.system('./vois_call.py ' + number) #Run python script to call
-
-        #Clear inputs and return to home screen
-        self.clearInputs()
-        self.manager.transition.direction = 'right'
-        self.manager.current = 'phoneHome'
-
-
-class textScreen(Screen):
-
-	def clearInputs(self):
-
-		self.ids.number_input = ''
-		self.ids.message_input = ''
+	def remove_label(self):
+		for lbl in self.labels:
+			self.ids.box.remove_widget(lbl)
+		self.labels.clear()
 
 
-	def text(self,number,message):
-		print('Sending text message')
+class TextScreen(Screen):
 
-		print("number:", number)
+	labels = []
 
-		print("message:", message)
+	def text(self, destination_number, message):
+		number = '+1 ' + destination_number[:3] + '-' + destination_number[3:6] + '-' + destination_number[6:]
+		self.labels[0].text = 'Sending ' + number + '...'
+		os.system('./vois_text.py ' + destination_number + ' ' + message)		# Run python script to text
 
-		os.system('./vois_text.py ' + number + ' ' + message) #Run python script to text
+	def reset_label(self):
+		self.remove_label()
+		lbl = Label(text='', font_size='56sp')
+		self.labels.append(lbl)
+		self.ids.box.add_widget(lbl)
 
-		#Clear inputs and return to call screen
-		self.clearInputs()
-		self.manager.transition.direction = 'right'
-		self.manager.current = 'phoneHome'
+	def remove_label(self):
+		for lbl in self.labels:
+			self.ids.box.remove_widget(lbl)
+		self.labels.clear()

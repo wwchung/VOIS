@@ -1,148 +1,69 @@
-<homeScreen>:
-    GridLayout:
-        cols: 1
-        rows: 6
-
-        Label:
-            font_size: '48sp'
-            text: 'Welcome to VOIS'
-
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'VOIS'
+                font_size: '45sp'
+            Label:
+                text: 'Say \'Alexa open VOIS App for (screen name)\'\nfrom anywhere in the app'
+                font_size: '16sp'
+                halign: 'center'
         Button:
-            font_size: '40sp'
+            font_size: '34sp'
             text: 'Phone'
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'phoneHome'
-
         Button:
-            font_size: '40sp'
+            font_size: '34sp'
             text: 'Email'
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'emailMain'
-
         Button:
-            font_size: '40sp'
-            text: 'Documents'
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'docs'
-
+            font_size: '34sp'
+            text: 'Document'
         Button:
-            font_size: '40sp'
+            font_size: '34sp'
             text: 'Web Search'
-            on_press:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'search'
 
-        Button:
-            font_size: '40sp'
-            text: 'Exit'
-            on_press: root.manager.get_screen('home').quit()
 
-<phoneHome>:
-    GridLayout:
-        cols: 1
-        rows: 3
-
+<LoadingScreen>:
+    BoxLayout:
+        orientation: 'vertical'
         Label:
-            text: 'VOIS - Phone'
+            text: 'Loading...'
+            font_size: '56sp'
 
-        GridLayout:
-            cols: 2
-            rows: 1
 
-            Button:
-                text: 'Call'
-                on_press:
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'call'
-
-            Button:
-                text: 'Text'
-                on_press:
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'text'
-
-        Button:
-            text: 'Back'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'home'
-
-<callScreen>:
-    GridLayout:
-        cols: 1
-        rows: 3
-
-        Label:
-            text: 'VOIS - Phone - Call'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
+<PhoneScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
             Label:
-                text: 'Enter Number'
-
-            TextInput:
-                id: number_input
-                text: ''
-                multiline: False
-                on_text_validate:
-                    root.manager.get_screen('call').call(self.text)
-
-
-        Button:
-            text: 'Back'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'phoneHome'
-
-
-
-<textScreen>:
-    GridLayout:
-        cols: 1
-        rows: 4
-
-        Label:
-            text: 'VOIS - Phone - Text'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-
+                text: 'Phone'
+                font_size: '45sp'
             Label:
-                text: 'Enter Number'
-
-            Label:
-                text: 'Enter Message'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-            TextInput:
-                id: number_input
-                text: ''
-                multiline: False
-
-            TextInput:
-                id: message_input
-                text: ''
-                multiline: False
-                on_text_validate:
-                    root.manager.get_screen('text').text(root.manager.get_screen('text').ids.number_input.text,self.text)
-
-
+                text: 'Say \'Alexa ask VOIS App to call (number)\'\nor\nSay \'Alexa ask VOIS App to text (number)\nwith (message)\''
+                font_size: '16sp'
+                halign: 'center'
         Button:
-            text: 'Back'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'phoneHome'
+            text: 'Call'
+            font_size: '45sp'
+        Button:
+            text: 'Text'
+            font_size: '45sp'
 
+
+<CallScreen>:
+    on_pre_enter: root.reset_label()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+
+
+<TextScreen>:
+    on_pre_enter: root.reset_label()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
 
 
 <EmailMainScreen>:
@@ -231,6 +152,7 @@
             id: body_id
 
             text: ''
+
 
 <InboxScreen>:
     on_enter:
@@ -339,49 +261,33 @@
             font_size: '24sp'
 
 
-
-
-
-
-
 <docsScreen>:
-
     GridLayout:
         cols: 1
         rows: 3
-
         Label:
             text: 'VOIS - Documents'
-
-
         GridLayout:
-
             cols: 2
             rows: 1
-
             Button:
                 text: 'New Document'
                 on_press:
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'newDocs'
-
             Button:
                 text: 'Previous Documents'
                 on_press:
                     root.manager.transition.direction = 'left'
                     root.manager.current = 'prevDocs'
-
         GridLayout:
             cols: 1
             rows: 1
-
             Button:
                 text: 'Back'
                 on_press:
                     root.manager.transition.direction = 'right'
                     root.manager.current = 'home'
-
-
 
 
 <newDocsScreen>
@@ -482,74 +388,61 @@
 
 <listDocsScreen>
     GridLayout:
-
         cols: 1
         rows: 12
-
         Label:
             id: title
             text: 'VOIS - Documents - Previous Documents - View'
-
         Button:
             id: doc_0
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_1
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_2
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_3
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_4
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_5
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_6
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_7
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_8
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             id: doc_9
             text: ''
             on_press:
                 root.manager.get_screen('listDocs').openDoc(self.text)
-
         Button:
             text: 'Back'
             on_press:
@@ -557,29 +450,35 @@
                 root.manager.current = 'prevDocs'
 
 
-<SearchScreen>:
-	GridLayout:
-	    rows: 4
-		cols: 1
-	    Label:
-	        text: 'Web Search'
-	        font_size: '56sp'
+<WebScreen>:
+	BoxLayout:
+	    orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Web Search'
+                font_size: '45sp'
+            Label:
+                text: 'Say \'Alexa search VOIS App for (query)\''
+                font_size: '16sp'
 	    TextInput:
 	    	id: search_input
-	    	font_size: '56sp'
-	        multiline: False
+	    	font_size: '45sp'
         Button:
             text: 'Search'
-            font_size: '28sp'
+            font_size: '45sp'
 
 
 <ResultScreen>:
-    on_pre_enter: root.add_buttons()
-    on_leave: root.remove_buttons()
-	GridLayout:
-        id: grid
-		rows: 6
-		cols: 1
-        Label:
-            text: 'Search Results'
-            font_size: '56sp'
+    on_pre_enter: root.reset_buttons()
+	BoxLayout:
+        id: box
+		orientation: 'vertical'
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Results'
+                font_size: '45sp'
+            Label:
+                text: 'Say \'Alexa open VOIS App for (result number)\''
+                font_size: '16sp'

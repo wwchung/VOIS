@@ -6,7 +6,7 @@ EECS 498 Section 9
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-import threading
+from threading import Thread
 import time
 import vois_phone
 import vois_email
@@ -17,20 +17,26 @@ import vois_websearch
 # Load kv file
 Builder.load_file('interface.kv')
 
-# Define home screen
-class homeScreen(Screen):
 
-    def quit(self):
-        App.get_running_app().stop()
+# Define home screen
+class HomeScreen(Screen):
+    pass
+
+
+# Define loading screen
+class LoadingScreen(Screen):
+    pass
+
 
 # Create screen manager
 sm = ScreenManager()
-sm.add_widget(homeScreen(name='home'))
+sm.add_widget(HomeScreen(name='home'))
+sm.add_widget(LoadingScreen(name='loading'))
 
 # Add all phone screens
-sm.add_widget(vois_phone.phoneHome(name='phoneHome'))
-sm.add_widget(vois_phone.callScreen(name='call'))
-sm.add_widget(vois_phone.textScreen(name='text'))
+sm.add_widget(vois_phone.PhoneScreen(name='phone'))
+sm.add_widget(vois_phone.CallScreen(name='call'))
+sm.add_widget(vois_phone.TextScreen(name='text'))
 
 # Add all email screens
 sm.add_widget(vois_email.EmailMainScreen(name='emailMain'))
@@ -46,8 +52,9 @@ sm.add_widget(vois_documents.prevDocsScreen(name='prevDocs'))
 sm.add_widget(vois_documents.listDocsScreen(name='listDocs'))
 
 # Add all web screens
-sm.add_widget(vois_websearch.SearchScreen(name='search'))
+sm.add_widget(vois_websearch.WebScreen(name='web'))
 sm.add_widget(vois_websearch.ResultScreen(name='result'))
+
 
 def execute(data):
     action_type = data['ActionType']
@@ -59,30 +66,45 @@ def execute(data):
         if destination_screen == 'Home':
             sm.current = 'home'
         elif destination_screen == 'Phone':
-            sm.current = 'phoneHome'
+            sm.current = 'phone'
         elif destination_screen == 'Email':
             sm.current = 'emailMain'
         elif destination_screen == 'Doc':
             sm.current = 'docs'
         elif destination_screen == 'Web':
-            sm.current = 'search'
+            sm.current = 'web'
         else:
             print('Error: Invalid destination screen')
 
     elif action_type == 'PhoneCall':
-        pass
+        destination_number = context['DestinationNumber']
+        current_screen = sm.current
+
+        sm.current = 'call'
+        screen = vois_phone.CallScreen()
+        screen.call(destination_number)
+        time.sleep(1)
+        sm.current = current_screen
 
     elif action_type == 'PhoneText':
-        pass
+        destination_number = context['DestinationNumber']
+        message = context['Message']
+        current_screen = sm.current
+
+        sm.current = 'text'
+        screen = vois_phone.TextScreen()
+        screen.text(destination_number, message)
+        time.sleep(1)
+        sm.current = current_screen
 
     elif action_type == 'EmailCompose':
         pass
 
     elif action_type == 'EmailInbox':
-        pass
+        sm.current = 'inbox'
 
     elif action_type == 'EmailSentMail':
-        pass
+        sm.current = 'sentBox'
 
     elif action_type == 'DocumentCreate':
         pass
@@ -103,7 +125,7 @@ def execute(data):
             print('Error: Empty query')
             return
         
-        sm.current = 'search'
+        sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'result'
         screen = vois_websearch.ResultScreen()
@@ -112,12 +134,14 @@ def execute(data):
     elif action_type == 'WebOpen':
         result_number = context['ResultNumber']
 
-        if sm.current != 'result':
-            print('Error: No search results')
+        screen = vois_websearch.ResultScreen()
+
+        if int(result_number) > min(5, len(screen.results)):
+            print('Error: Invalid result number')
             return
 
-        screen = vois_websearch.ResultScreen()
         screen.open_url(result_number)
+
 
 def prompt():
     print()
@@ -149,6 +173,7 @@ def prompt():
 
         data['ActionType'] = 'PhoneText'
         data['Context'] = {
+            'DestinationNumber': destination_number,
             'Message': message
         }
 
@@ -208,6 +233,10 @@ def prompt():
         }
 
     elif action_type == 'WebOpen':
+        if sm.current != 'result':
+            print('Error: Invalid action type')
+            return
+
         result_number = input('Enter result number: ')
 
         data['ActionType'] = 'WebOpen'
@@ -219,20 +248,23 @@ def prompt():
         print('Error: Invalid action type')
         return
 
-    t = threading.Thread(target=execute, args=(data,))
-    t.start()
+    execute(data)
+
 
 def loop():
     while True:
-        time.sleep(0.5)
+        time.sleep(0.1)
         prompt()
+
 
 class VOIS(App):
 
     def build(self):
         return sm
 
+
 if __name__ == '__main__':
-    t = threading.Thread(target=loop)
+    t = Thread(target=loop)
+    t.daemon = True     # Stop thread at shutdown
     t.start()
     VOIS().run()

@@ -1,13 +1,7 @@
 from bs4 import BeautifulSoup
 from functools import partial
-from kivy.app import App
-from kivy.lang.builder import Builder
-from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.textinput import TextInput
+from kivy.uix.screenmanager import Screen
 import urllib.parse
 import urllib.request
 import webbrowser
@@ -25,8 +19,7 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 # chrome_path = '/usr/bin/google-chrome %s'
 
 
-class SearchScreen(Screen):
-
+class WebScreen(Screen):
 	pass
 
 	# def im_feeling_lucky(self, query):
@@ -57,6 +50,8 @@ class ResultScreen(Screen):
 	results = []
 
 	def search(self, query):
+		self.results.clear()
+		
 		search_url = google_url + query.replace(' ', '+')
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
@@ -71,11 +66,11 @@ class ResultScreen(Screen):
 				try:
 					title = result.find('h3', class_='r')
 					url = str(title).split('/url?q=')[1].split('&amp')[0]
-					if len(url) > 72:
-						url = url[:72] + '...'
-					snippet = result.find('span', class_='st')
-					if len(snippet.text) > 72:
-						snippet = snippet.text[:72] + '...'
+					if len(url) > 64:
+						url = url[:64] + '...'
+					snippet = result.find('span', class_='st').get_text()
+					if len(snippet) > 64:
+						snippet = snippet[:64] + '...'
 					self.results.append({'title': title.text, 'url': url, 'snippet': snippet})
 				except IndexError:
 					pass
@@ -92,14 +87,21 @@ class ResultScreen(Screen):
 	def open_url(self, index):
 		webbrowser.get(chrome_path).open(self.results[int(index) - 1]['url'])
 
-	def add_buttons(self):
-		for _ in range(5):
-			btn = Button(text='Loading...', font_size='16sp')
+	def reset_buttons(self):
+		self.remove_buttons()
+		for i in range(5):
+			btn = Button(text='', font_size='16sp')
+			if len(self.results) == 0:
+				btn.text = 'Loading...'
+			else:
+				if i < len(self.results):
+					btn.text = str(i + 1) + '. ' + self.results[i]['title'] + '\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
+				else:
+					btn.text = ''
 			self.buttons.append(btn)
-			self.ids.grid.add_widget(btn)
+			self.ids.box.add_widget(btn)
 
 	def remove_buttons(self):
 		for btn in self.buttons:
-			self.ids.grid.remove_widget(btn)
+			self.ids.box.remove_widget(btn)
 		self.buttons.clear()
-		self.results.clear()

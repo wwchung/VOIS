@@ -558,50 +558,28 @@
 
 
 <SearchScreen>:
-	search_input: search_input
 	GridLayout:
 	    rows: 4
 		cols: 1
 	    Label:
-	        text: 'VOIS - Web Search'
+	        text: 'Web Search'
 	        font_size: '56sp'
 	    TextInput:
 	    	id: search_input
 	    	font_size: '56sp'
 	        multiline: False
-	    GridLayout:
-	    	rows: 1
-	    	cols: 2
-		    Button:
-		    	text: 'Search'
-		    	font_size: '28sp'
-		        on_press:
-                    root.manager.transition.direction = 'left'
-                    root.search()
-		    Button:
-		    	text: "I'm Feeling Lucky"
-		    	font_size: '28sp'
-		    	on_press: root.im_feeling_lucky()
         Button:
-            text: "Back"
+            text: 'Search'
             font_size: '28sp'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'home'
 
 
 <ResultScreen>:
-    grid: grid
-	on_pre_enter: root.set_buttons()
-	on_enter: root.show_result()
-    on_leave: root.clear_buttons()
+    on_pre_enter: root.add_buttons()
+    on_leave: root.remove_buttons()
 	GridLayout:
         id: grid
 		rows: 6
 		cols: 1
-		Button:
-			text: 'Back'
-			font_size: '28sp'
-			on_press:
-				root.manager.transition.direction = 'right'
-				root.manager.current = 'search'
+        Label:
+            text: 'Search Results'
+            font_size: '56sp'

@@ -27,46 +27,37 @@ chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
 
 class SearchScreen(Screen):
 
-	search_input = ObjectProperty(None)
+	pass
 
-	def search(self):
-		if self.search_input.text:
-			self.manager.current = 'result'
+	# def im_feeling_lucky(self, query):
+	# 	search_url = google_url + query.replace(' ', '+')
+	# 	try:
+	# 		user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
+	# 		headers = {'User-Agent': user_agent}
 
-	def im_feeling_lucky(self):
-		if self.search_input.text == '':
-			return
+	# 		req = urllib.request.Request(search_url, headers = headers)
+	# 		with urllib.request.urlopen(req) as response:
+	# 			html = response.read()
 
-		search_url = google_url + self.search_input.text.replace(' ', '+')
-		try:
-			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
-			headers = {'User-Agent': user_agent}
-
-			req = urllib.request.Request(search_url, headers = headers)
-			with urllib.request.urlopen(req) as response:
-				html = response.read()
-
-			soup = BeautifulSoup(html, 'html.parser')
-			for title in soup.find_all('h3', class_='r'):
-				try:
-					url = str(title).split('/url?q=')[1].split('&amp')[0]
-					webbrowser.get(chrome_path).open(url)
-					break
-				except IndexError:
-					pass
-		except Exception as e:
-			print(str(e))
+	# 		soup = BeautifulSoup(html, 'html.parser')
+	# 		for title in soup.find_all('h3', class_='r'):
+	# 			try:
+	# 				url = str(title).split('/url?q=')[1].split('&amp')[0]
+	# 				webbrowser.get(chrome_path).open(url)
+	# 				break
+	# 			except IndexError:
+	# 				pass
+	# 	except Exception as e:
+	# 		print(str(e))
 
 
 class ResultScreen(Screen):
 
-	grid = ObjectProperty(None)
 	buttons = []
+	results = []
 
-	def show_result(self):
-		search_url = google_url + self.manager.get_screen('search').search_input.text.replace(' ', '+')
-		results = []
-
+	def search(self, query):
+		search_url = google_url + query.replace(' ', '+')
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
 			headers = {'User-Agent': user_agent}
@@ -85,7 +76,7 @@ class ResultScreen(Screen):
 					snippet = result.find('span', class_='st')
 					if len(snippet.text) > 72:
 						snippet = snippet.text[:72] + '...'
-					results.append({'title': title.text, 'url': url, 'snippet': snippet})
+					self.results.append({'title': title.text, 'url': url, 'snippet': snippet})
 				except IndexError:
 					pass
 
@@ -93,34 +84,22 @@ class ResultScreen(Screen):
 			print(str(e))
 
 		for i in range(5):
-			self.buttons[i].text = str(i + 1) + '. ' + results[i]['title'] + '\n' + results[i]['url'] + '\n' + results[i]['snippet']
-			self.buttons[i].bind(on_press=partial(self.open_url, results[i]['url']))
+			if i < len(self.results):
+				self.buttons[i].text = str(i + 1) + '. ' + self.results[i]['title'] + '\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
+			else:
+				self.buttons[i].text = ''
 
-	def open_url(self, url, object):
-		webbrowser.get(chrome_path).open(url)
+	def open_url(self, index):
+		webbrowser.get(chrome_path).open(self.results[int(index) - 1]['url'])
 
-	def set_buttons(self):
-		for i in range(5):
+	def add_buttons(self):
+		for _ in range(5):
 			btn = Button(text='Loading...', font_size='16sp')
 			self.buttons.append(btn)
-			self.grid.add_widget(btn)
+			self.ids.grid.add_widget(btn)
 
-	def clear_buttons(self):
+	def remove_buttons(self):
 		for btn in self.buttons:
-			self.grid.remove_widget(btn)
+			self.ids.grid.remove_widget(btn)
 		self.buttons.clear()
-
-
-sm = ScreenManager()
-sm.add_widget(SearchScreen(name='search'))
-sm.add_widget(ResultScreen(name='result'))
-
-
-class SearchApp(App):
-
-    def build(self):
-        return sm
-
-
-if __name__ == '__main__':
-    SearchApp().run()
+		self.results.clear()

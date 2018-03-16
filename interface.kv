@@ -76,6 +76,9 @@
                 font_size: '20sp'
                 halign: 'center'
         Button:
+            text: 'Compose'
+            font_size: '45sp'
+        Button:
             text: 'Inbox'
             font_size: '45sp'
         Button:
@@ -121,7 +124,7 @@
             id: header_grid
             cols: 2
             size_hint: (1, None)
-            height: 120
+            height: 240
 
 
 <ComposeScreen>:
@@ -176,18 +179,6 @@
         TextInput:
             id: body_id
             text: ''
-            
-
-<ComposeScreen>:
-    on_pre_enter: root.reset_widgets()
-    GridLayout:
-        id: body_grid
-        cols: 1
-        GridLayout:
-            id: header_grid
-            cols: 2
-            size_hint: (1, None)
-            height: 120
 
 
 <docsScreen>:

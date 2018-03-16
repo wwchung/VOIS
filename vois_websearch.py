@@ -69,7 +69,7 @@ class ResultScreen(Screen):
 		self.remove_buttons()
 
 		for i in range(6):
-			btn = Button(text='', font_size='16sp', text_size=(720, None), markup=True)
+			btn = Button(text='', font_size='16sp', text_size=(1440, None), markup=True)
 			if len(self.results) == 0:
 				btn.text = 'Loading...'
 			else:

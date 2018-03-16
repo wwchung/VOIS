@@ -124,7 +124,7 @@ class InboxScreen(Screen):
         self.remove_buttons()
         
         for i in range(6):
-            btn = Button(text='', font_size='16sp', text_size=(720, None), markup=True)
+            btn = Button(text='', font_size='16sp', text_size=(1440, None), markup=True)
             if len(inbox_messages) == 0:
                 btn.text = 'Loading...'
             else:
@@ -178,7 +178,7 @@ class SentScreen(Screen):
         self.remove_buttons()
         
         for i in range(6):
-            btn = Button(text='', font_size='16sp', text_size=(720, None), markup=True)
+            btn = Button(text='', font_size='16sp', text_size=(1440, None), markup=True)
             if len(sent_messages) == 0:
                 btn.text = 'Loading...'
             else:
@@ -237,27 +237,27 @@ class MessageScreen(Screen):
     def reset_widgets(self):
         self.remove_widgets()
 
-        from_label = Label(text='From:', size_hint=(0.2, None), height=60)
+        from_label = Label(text='From:', font_size='20sp', size_hint=(0.2, None), height=120)
         self.header_widgets.append(from_label)
         self.ids.header_grid.add_widget(from_label)
 
-        from_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
-        self.header_widgets.append(from_text_input)
-        self.ids.header_grid.add_widget(from_text_input)
+        from_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
+        self.header_widgets.append(from_label)
+        self.ids.header_grid.add_widget(from_label)
 
-        subject_label = Label(text='Subject:', size_hint=(0.2, None), height=60)
+        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
         self.header_widgets.append(subject_label)
         self.ids.header_grid.add_widget(subject_label)
         
-        subject_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
-        self.header_widgets.append(subject_text_input)
-        self.ids.header_grid.add_widget(subject_text_input)
+        subject_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
+        self.header_widgets.append(subject_label)
+        self.ids.header_grid.add_widget(subject_label)
         
         body_text_input = TextInput(text='')
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='Reply', font_size='20sp', size_hint=(1, None), height=60)
+        btn = Button(text='Reply', font_size='20sp', size_hint=(1, None), height=120)
         self.body_widgets.append(btn)
         self.ids.body_grid.add_widget(btn)
 

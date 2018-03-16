@@ -72,20 +72,6 @@ def execute(data):
         elif destination_screen == 'email':
             sm.current = 'email'
 
-        elif destination_screen == 'emailinbox':
-            sm.current = 'loading'
-            time.sleep(0.5)
-            sm.current = 'inbox'
-            screen = vois_email.InboxScreen()
-            screen.get_inbox_emails()
-
-        elif destination_screen == 'emailsent':
-            sm.current = 'loading'
-            time.sleep(0.5)
-            sm.current = 'sent'
-            screen = vois_email.SentScreen()
-            screen.get_sent_emails()
-
         elif destination_screen == 'doc':
             sm.current = 'docs'
 
@@ -115,6 +101,27 @@ def execute(data):
         screen.text(destination_number, message)
         time.sleep(1)
         sm.current = current_screen
+
+    elif action_type == 'emailcompose':
+        to = context['To']
+        subject = context['Subject']
+        message = context['Message']
+
+        # TODO
+
+    elif action_type == 'emailinbox':
+        sm.current = 'loading'
+        time.sleep(0.5)
+        sm.current = 'inbox'
+        screen = vois_email.InboxScreen()
+        screen.get_inbox_emails()
+
+    elif action_type == 'emailsent':
+        sm.current = 'loading'
+        time.sleep(0.5)
+        sm.current = 'sent'
+        screen = vois_email.SentScreen()
+        screen.get_sent_emails()
     
     elif action_type == 'emailopen':
         message_number = int(context['MessageNumber'])
@@ -125,26 +132,35 @@ def execute(data):
             screen = vois_email.MessageScreen()
             screen.open_message(msg, True)
 
+            # BUG
+
         elif sm.current == 'sent':
-            msg= vois_email.sent_messages[message_number - 1]
+            msg = vois_email.sent_messages[message_number - 1]
             sm.current = 'message'
             screen = vois_email.MessageScreen()
             screen.open_message(msg, False)
-        
-    elif action_type == 'emailreply':
-        message = context['Message']
+
+            # BUG
 
     elif action_type == 'documentcreate':
         pass
 
+        # TODO
+
     elif action_type == 'documentsearch':
         pass
+
+        # TODO
 
     elif action_type == 'documentrecent':
         pass
 
+        # TODO
+
     elif action_type == 'documentopen':
         pass
+
+        # TODO
 
     elif action_type == 'websearch':
         query = context['Query']
@@ -205,6 +221,24 @@ def prompt():
             'Message': message
         }
 
+    elif action_type == 'emailcompose':
+        to = input('Enter to: ')
+        subject = input('Enter subject: ')
+        message = input('Enter message: ')
+
+        data['ActionType'] = 'EmailReply'
+        data['Context'] = {
+            'To': to,
+            'Subject': subject,
+            'Message': message
+        }
+
+    elif action_type == 'emailinbox':
+        data['ActionType'] = 'EmailInbox'
+
+    elif action_type == 'emailsent':
+        data['ActionType'] = 'EmailSent'
+
     elif action_type == 'emailopen':
         if sm.current != 'inbox' and sm.current != 'sent':
             print('Error: Invalid action type')
@@ -215,18 +249,6 @@ def prompt():
         data['ActionType'] = 'EmailOpen'
         data['Context'] = {
             'MessageNumber': message_number
-        }
-
-    elif action_type == 'emailreply':
-        if sm.current != 'inbox':
-            print('Error: Invalid action type')
-            return
-
-        message = input('Enter message: ')
-
-        data['ActionType'] = 'EmailReply'
-        data['Context'] = {
-            'Message': message
         }
 
     elif action_type == 'documentcreate':

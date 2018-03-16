@@ -71,7 +71,7 @@ def ModifyMessage(service, msg_id, msg_labels, user_id='me'):
           print ('An error occurred: %s', error)
 
 
-def GetInboxMessages(service, num_msg=7):
+def GetInboxMessages(service, num_msg=6):
     messages = GetLabelMessages(service, numResults=num_msg)
     messages_info = []
     for msg in messages:
@@ -108,7 +108,7 @@ def GetInboxMessages(service, num_msg=7):
     return messages_info
 
 
-def GetSentMessages(service, num_msg=7):
+def GetSentMessages(service, num_msg=6):
     messages = GetLabelMessages(service, label_ids=["SENT"], numResults=num_msg)
     messages_info = []
     for msg in messages:

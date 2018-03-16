@@ -1,47 +1,29 @@
 from bs4 import BeautifulSoup
-from functools import partial
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 import urllib.parse
 import urllib.request
 import webbrowser
 
+
 # Google Search
-google_url = 'http://www.google.com/search?q='
+GOOGLE_URL = 'http://www.google.com/search?q='
+
 
 # MacOS
-chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
+CHROME_PATH = 'open -a /Applications/Google\ Chrome.app %s'
 
-# Windows
-# chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe %s'
 
-# Linux
-# chrome_path = '/usr/bin/google-chrome %s'
+SLICE_LENGTH = 88
+def slice(str):
+    if str:
+        return str[:SLICE_LENGTH] + "..." if len(str) > SLICE_LENGTH else str
+    else:
+        return ''
 
 
 class WebScreen(Screen):
 	pass
-
-	# def im_feeling_lucky(self, query):
-	# 	search_url = google_url + query.replace(' ', '+')
-	# 	try:
-	# 		user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
-	# 		headers = {'User-Agent': user_agent}
-
-	# 		req = urllib.request.Request(search_url, headers = headers)
-	# 		with urllib.request.urlopen(req) as response:
-	# 			html = response.read()
-
-	# 		soup = BeautifulSoup(html, 'html.parser')
-	# 		for title in soup.find_all('h3', class_='r'):
-	# 			try:
-	# 				url = str(title).split('/url?q=')[1].split('&amp')[0]
-	# 				webbrowser.get(chrome_path).open(url)
-	# 				break
-	# 			except IndexError:
-	# 				pass
-	# 	except Exception as e:
-	# 		print(str(e))
 
 
 class ResultScreen(Screen):
@@ -52,7 +34,7 @@ class ResultScreen(Screen):
 	def search(self, query):
 		self.results.clear()
 		
-		search_url = google_url + query.replace(' ', '+')
+		search_url = GOOGLE_URL + query.replace(' ', '+')
 		try:
 			user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
 			headers = {'User-Agent': user_agent}
@@ -65,12 +47,8 @@ class ResultScreen(Screen):
 			for result in soup.find_all('div', class_='g'):
 				try:
 					title = result.find('h3', class_='r')
-					url = str(title).split('/url?q=')[1].split('&amp')[0]
-					if len(url) > 64:
-						url = url[:64] + '...'
-					snippet = result.find('span', class_='st').get_text()
-					if len(snippet) > 64:
-						snippet = snippet[:64] + '...'
+					url = slice(str(title).split('/url?q=')[1].split('&amp')[0])
+					snippet = slice(result.find('span', class_='st').get_text().replace('\n', ''))
 					self.results.append({'title': title.text, 'url': url, 'snippet': snippet})
 				except IndexError:
 					pass
@@ -78,24 +56,25 @@ class ResultScreen(Screen):
 		except Exception as e:
 			print(str(e))
 
-		for i in range(5):
+		for i in range(6):
 			if i < len(self.results):
-				self.buttons[i].text = str(i + 1) + '. ' + self.results[i]['title'] + '\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
+				self.buttons[i].text = '[b]' + str(i + 1) + '. ' + self.results[i]['title'] + '[/b]\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
 			else:
 				self.buttons[i].text = ''
 
-	def open_url(self, index):
-		webbrowser.get(chrome_path).open(self.results[int(index) - 1]['url'])
+	def open_url(self, result_number):
+		webbrowser.get(CHROME_PATH).open(self.results[int(result_number) - 1]['url'])
 
 	def reset_buttons(self):
 		self.remove_buttons()
-		for i in range(5):
-			btn = Button(text='', font_size='16sp')
+
+		for i in range(6):
+			btn = Button(text='', font_size='16sp', text_size=(720, None), markup=True)
 			if len(self.results) == 0:
 				btn.text = 'Loading...'
 			else:
 				if i < len(self.results):
-					btn.text = str(i + 1) + '. ' + self.results[i]['title'] + '\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
+					btn.text = '[b]' + str(i + 1) + '. ' + self.results[i]['title'] + '[/b]\n' + self.results[i]['url'] + '\n' + self.results[i]['snippet']
 				else:
 					btn.text = ''
 			self.buttons.append(btn)

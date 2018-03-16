@@ -39,11 +39,11 @@ sm.add_widget(vois_phone.CallScreen(name='call'))
 sm.add_widget(vois_phone.TextScreen(name='text'))
 
 # Add all email screens
-sm.add_widget(vois_email.EmailMainScreen(name='emailMain'))
+sm.add_widget(vois_email.EmailScreen(name='email'))
 sm.add_widget(vois_email.ComposeScreen(name='compose'))
 sm.add_widget(vois_email.InboxScreen(name='inbox'))
+sm.add_widget(vois_email.SentScreen(name='sent'))
 sm.add_widget(vois_email.MessageScreen(name='message'))
-sm.add_widget(vois_email.SentBoxScreen(name='sentBox'))
 
 # Add all document screens
 sm.add_widget(vois_documents.docsScreen(name='docs'))
@@ -57,26 +57,45 @@ sm.add_widget(vois_websearch.ResultScreen(name='result'))
 
 
 def execute(data):
-    action_type = data['ActionType']
+    action_type = data['ActionType'].lower()
     context = data['Context']
 
-    if action_type == 'Navigate':
-        destination_screen = context['DestinationScreen']
+    if action_type == 'navigate':
+        destination_screen = context['DestinationScreen'].lower()
 
-        if destination_screen == 'Home':
+        if destination_screen == 'home':
             sm.current = 'home'
-        elif destination_screen == 'Phone':
+
+        elif destination_screen == 'phone':
             sm.current = 'phone'
-        elif destination_screen == 'Email':
-            sm.current = 'emailMain'
-        elif destination_screen == 'Doc':
+
+        elif destination_screen == 'email':
+            sm.current = 'email'
+
+        elif destination_screen == 'emailinbox':
+            sm.current = 'loading'
+            time.sleep(0.5)
+            sm.current = 'inbox'
+            screen = vois_email.InboxScreen()
+            screen.get_inbox_emails()
+
+        elif destination_screen == 'emailsent':
+            sm.current = 'loading'
+            time.sleep(0.5)
+            sm.current = 'sent'
+            screen = vois_email.SentScreen()
+            screen.get_sent_emails()
+
+        elif destination_screen == 'doc':
             sm.current = 'docs'
-        elif destination_screen == 'Web':
+
+        elif destination_screen == 'web':
             sm.current = 'web'
+
         else:
             print('Error: Invalid destination screen')
 
-    elif action_type == 'PhoneCall':
+    elif action_type == 'phonecall':
         destination_number = context['DestinationNumber']
         current_screen = sm.current
 
@@ -86,7 +105,7 @@ def execute(data):
         time.sleep(1)
         sm.current = current_screen
 
-    elif action_type == 'PhoneText':
+    elif action_type == 'phonetext':
         destination_number = context['DestinationNumber']
         message = context['Message']
         current_screen = sm.current
@@ -96,29 +115,38 @@ def execute(data):
         screen.text(destination_number, message)
         time.sleep(1)
         sm.current = current_screen
+    
+    elif action_type == 'emailopen':
+        message_number = int(context['MessageNumber'])
 
-    elif action_type == 'EmailCompose':
+        if sm.current == 'inbox':
+            msg = vois_email.inbox_messages[message_number - 1]
+            sm.current = 'message'
+            screen = vois_email.MessageScreen()
+            screen.open_message(msg, True)
+
+        elif sm.current == 'sent':
+            msg= vois_email.sent_messages[message_number - 1]
+            sm.current = 'message'
+            screen = vois_email.MessageScreen()
+            screen.open_message(msg, False)
+        
+    elif action_type == 'emailreply':
+        message = context['Message']
+
+    elif action_type == 'documentcreate':
         pass
 
-    elif action_type == 'EmailInbox':
-        sm.current = 'inbox'
-
-    elif action_type == 'EmailSentMail':
-        sm.current = 'sentBox'
-
-    elif action_type == 'DocumentCreate':
+    elif action_type == 'documentsearch':
         pass
 
-    elif action_type == 'DocumentSearch':
+    elif action_type == 'documentrecent':
         pass
 
-    elif action_type == 'DocumentTopTen':
+    elif action_type == 'documentopen':
         pass
 
-    elif action_type == 'DocumentOpen':
-        pass
-
-    elif action_type == 'WebSearch':
+    elif action_type == 'websearch':
         query = context['Query']
 
         if query == '':
@@ -131,7 +159,7 @@ def execute(data):
         screen = vois_websearch.ResultScreen()
         screen.search(query)
 
-    elif action_type == 'WebOpen':
+    elif action_type == 'webopen':
         result_number = context['ResultNumber']
 
         screen = vois_websearch.ResultScreen()
@@ -145,13 +173,13 @@ def execute(data):
 
 def prompt():
     print()
-    action_type = input('Enter action type: ')
+    action_type = input('Enter action type: ').lower()
     data = {
         'ActionType': '',
         'Context': {}
     }
 
-    if action_type == 'Navigate':
+    if action_type == 'navigate':
         destionation_screen = input('Enter destination screen: ')
         
         data['ActionType'] = 'Navigate'
@@ -159,7 +187,7 @@ def prompt():
             'DestinationScreen': destionation_screen
         }
 
-    elif action_type == 'PhoneCall':
+    elif action_type == 'phonecall':
         destination_number = input('Enter destination number: ')
         
         data['ActionType'] = 'PhoneCall'
@@ -167,7 +195,7 @@ def prompt():
             'DestinationNumber': destination_number
         }
 
-    elif action_type == 'PhoneText':
+    elif action_type == 'phonetext':
         destination_number = input('Enter destination number: ')
         message = input('Enter message: ')
 
@@ -177,25 +205,31 @@ def prompt():
             'Message': message
         }
 
-    elif action_type == 'EmailCompose':
-        to = input('Enter recipient: ')
-        subject = input('Enter subject: ')
-        message = input('Enter message: ')
-        
-        data['ActionType'] = 'EmailCompose'
+    elif action_type == 'emailopen':
+        if sm.current != 'inbox' and sm.current != 'sent':
+            print('Error: Invalid action type')
+            return
+
+        message_number = input('Enter message number: ')
+
+        data['ActionType'] = 'EmailOpen'
         data['Context'] = {
-            'To': to,
-            'Subject': subject,
+            'MessageNumber': message_number
+        }
+
+    elif action_type == 'emailreply':
+        if sm.current != 'inbox':
+            print('Error: Invalid action type')
+            return
+
+        message = input('Enter message: ')
+
+        data['ActionType'] = 'EmailReply'
+        data['Context'] = {
             'Message': message
         }
-        
-    elif action_type == 'EmailInbox':
-        data['ActionType'] = 'EmailInbox'
 
-    elif action_type == 'EmailSentMail':
-        data['ActionType'] = 'EmailSentMail'
-
-    elif action_type == 'DocumentCreate':
+    elif action_type == 'documentcreate':
         file_name = input('Enter file name: ')
         folder_name = input('Enter folder name: ')
         
@@ -205,7 +239,7 @@ def prompt():
 		    'FolderName': folder_name
         }
 
-    elif action_type == 'DocumentSearch':
+    elif action_type == 'documentsearch':
         folder_name = input('Enter folder name: ')
         
         data['ActionType'] = 'EmailCompose'
@@ -213,10 +247,10 @@ def prompt():
             'FolderName': folder_name
         }
 
-    elif action_type == 'DocumentRecent':
+    elif action_type == 'documentrecent':
         data['ActionType'] = 'DocumentRecent'
 
-    elif action_type == 'DocumentOpen':
+    elif action_type == 'documentopen':
         document_number = input('Enter document number: ')
         
         data['ActionType'] = 'DocumentOpen'
@@ -224,7 +258,7 @@ def prompt():
 		    'DocumentNumber': document_number
         }
 
-    elif action_type == 'WebSearch':
+    elif action_type == 'websearch':
         query = input('Enter query: ')
 
         data['ActionType'] = 'WebSearch'
@@ -232,7 +266,7 @@ def prompt():
             'Query': query
         }
 
-    elif action_type == 'WebOpen':
+    elif action_type == 'webopen':
         if sm.current != 'result':
             print('Error: Invalid action type')
             return

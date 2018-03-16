@@ -2,13 +2,12 @@
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            orientation: 'horizontal'
             Label:
                 text: 'VOIS'
                 font_size: '45sp'
             Label:
-                text: 'Say \'Alexa open VOIS App for (screen name)\'\nfrom anywhere in the app'
-                font_size: '16sp'
+                text: 'Use voice commands anywhere in the app\n\n\"Open {feature}\"'
+                font_size: '20sp'
                 halign: 'center'
         Button:
             font_size: '34sp'
@@ -36,13 +35,12 @@
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            orientation: 'horizontal'
             Label:
                 text: 'Phone'
                 font_size: '45sp'
             Label:
-                text: 'Say \'Alexa ask VOIS App to call (number)\'\nor\nSay \'Alexa ask VOIS App to text (number)\nwith (message)\''
-                font_size: '16sp'
+                text: '\"Call {number}\"\n\"Text {number} that {message}\"'
+                font_size: '20sp'
                 halign: 'center'
         Button:
             text: 'Call'
@@ -66,37 +64,64 @@
         orientation: 'vertical'
 
 
-<EmailMainScreen>:
+<EmailScreen>:
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            font_size: '40sp'
-            text: 'VOIS - Email'
+        BoxLayout:
+            Label:
+                text: 'Email'
+                font_size: '45sp'
+            Label:
+                text: '\"Open inbox\"\n\"Open sent mail\"'
+                font_size: '20sp'
+                halign: 'center'
         Button:
-            text: 'COMPOSE'
-            font_size: '40sp'
-            on_release:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'compose'
-                root.manager.get_screen('compose').clear_inputs()
+            text: 'Inbox'
+            font_size: '45sp'
         Button:
-            text: 'INBOX'
-            font_size: '40sp'
-            on_release:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'inbox'
-        Button:
-            text: 'SENT MAIL'
-            font_size: '40sp'
-            on_release:
-                root.manager.transition.direction = 'left'
-                root.manager.current = 'sentBox'
-        Button:
-            text: 'BACK'
-            font_size: '40sp'
-            on_release:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'home'
+            text: 'Sent mail'
+            font_size: '45sp'
+
+
+<InboxScreen>:
+    on_pre_enter: root.reset_buttons()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'Inbox'
+                font_size: '45sp'
+            Label:
+                text: '\"Open message {number}\"'
+                font_size: '20sp'
+                halign: 'center'
+
+
+<SentScreen>:
+    on_pre_enter: root.reset_buttons()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'Sent Mail'
+                font_size: '45sp'
+            Label:
+                text: '\"Open message {number}\"'
+                font_size: '20sp'
+
+
+<MessageScreen>:
+    on_pre_enter: root.reset_widgets()
+    GridLayout:
+        id: body_grid
+        cols: 1
+        GridLayout:
+            id: header_grid
+            cols: 2
+            size_hint: (1, None)
+            height: 120
 
 
 <ComposeScreen>:
@@ -150,115 +175,19 @@
                 text: ''
         TextInput:
             id: body_id
-
             text: ''
+            
 
-
-<InboxScreen>:
-    on_enter:
-        root.get_inbox_emails()
-    BoxLayout:
-        id: box_id
-        orientation: 'vertical'
-        BoxLayout:
-            size_hint: (1, None)
-            height: 60
-            Button:
-                size_hint: (.3, None)
-                text: 'Back'
-                height: 60
-                on_release:
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'emailMain'
-            Button:
-                size_hint: (.7, None)
-                text: 'Refresh'
-                height: 60
-                on_release: root.get_inbox_emails()
-        Label:
-            id: loading_label1
-            text: 'Loading . . .'
-            font_size: '32sp'
-
-
-<SentBoxScreen>:
-    on_enter:
-        root.get_sent_emails()
-    BoxLayout:
-        id: sent_box_id
-        orientation: 'vertical'
-        BoxLayout:
-            size_hint: (1, None)
-            height: 60
-            Button:
-                text: 'Back'
-                size_hint: (.3, None)
-                height: 60
-                on_release:
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'emailMain'
-            Button:
-                text: 'Refresh'
-                size_hint: (.7, None)
-                height: 60
-                on_release: root.get_sent_emails()
-        Label:
-            id: loading_label2
-            text: 'Loading . . .'
-            font_size: '32sp'
-
-
-<MessageScreen>:
-    on_enter:
-        root.manager.transition.direction = 'right'
-    on_leave: root.manager.transition.direction = 'left'
+<ComposeScreen>:
+    on_pre_enter: root.reset_widgets()
     GridLayout:
+        id: body_grid
         cols: 1
-        rows: 3
-        BoxLayout:
-            size_hint: (1, None)
-            height: 60
-            id: message_btns
-            Button:
-                text: 'Back'
-                size_hint: (.3, None)
-                height: 60
-                on_release:
-                    root.go_back()
-            Button:
-                id: compose_btn
-                text: 'Reply'
-                size_hint: (.7, None)
-                height: 60
         GridLayout:
+            id: header_grid
+            cols: 2
             size_hint: (1, None)
             height: 120
-            cols: 2
-            rows: 2
-            Label:
-                size_hint: (.2, None)
-                text: 'From:'
-                height: 60
-            Label:
-                id: address_view_id
-                size_hint: (.8, None)
-                text: ''
-                text_size: self.width, None
-                height: 60
-            Label:
-                size_hint: (.2, None)
-                text: 'Subject:'
-                height: 60
-            Label:
-                id: subject_view_id
-                size_hint: (.8, None)
-                text: ''
-                text_size: self.width, None
-                height: 60
-        TextInput:
-            id: body_view_id
-            text: '1'
-            font_size: '24sp'
 
 
 <docsScreen>:
@@ -454,18 +383,17 @@
 	BoxLayout:
 	    orientation: 'vertical'
         BoxLayout:
-            orientation: 'horizontal'
             Label:
                 text: 'Web Search'
                 font_size: '45sp'
             Label:
-                text: 'Say \'Alexa search VOIS App for (query)\''
-                font_size: '16sp'
+                text: '\"Google search {word}\"'
+                font_size: '20sp'
 	    TextInput:
 	    	id: search_input
 	    	font_size: '45sp'
         Button:
-            text: 'Search'
+            text: 'Google Search'
             font_size: '45sp'
 
 
@@ -475,10 +403,9 @@
         id: box
 		orientation: 'vertical'
         BoxLayout:
-            orientation: 'horizontal'
             Label:
-                text: 'Results'
+                text: 'Search Results'
                 font_size: '45sp'
             Label:
-                text: 'Say \'Alexa open VOIS App for (result number)\''
-                font_size: '16sp'
+                text: '\"Open result {number}\"'
+                font_size: '20sp'

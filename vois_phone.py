@@ -37,7 +37,7 @@ class TextScreen(Screen):
 	labels = []
 
 	def text(self, destination_number, message):
-		self.labels[0].text = 'Sending ' + format(destination_number) + ':\n\n' + message
+		self.labels[0].text = 'Sending ' + format(destination_number) + '...'
 		os.system('./vois_text.py ' + destination_number + ' ' + message)		# Run python script to text
 
 	def reset_label(self):

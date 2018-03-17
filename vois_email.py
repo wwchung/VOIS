@@ -17,64 +17,12 @@ import httplib2
 import re
 import time
 
-# from gmail.credential import get_credentials
-# from gmail.retrieve_email import GetInboxMessages
-# from gmail.retrieve_email import GetSentMessages
-# from gmail.retrieve_email import ModifyMessage
-# from gmail.send_email import CreateMessage
-# from gmail.send_email import SendMessage
-
-# import httplib2
-# from googleapiclient.discovery import build
-
-# import kivy
-# kivy.require('1.0.6') # replace with your current kivy version !
-
-# from kivy.app import App
-# from kivy.uix.gridlayout import GridLayout
-# from kivy.uix.button import Button
-# from kivy.uix.boxlayout import BoxLayout
-# from kivy.uix.label import Label
-# from kivy.uix.textinput import TextInput
-# from kivy.uix.popup import Popup
-# from kivy.core.text.markup import MarkupLabel
-# from kivy.uix.screenmanager import ScreenManager, Screen
-# from kivy.lang import Builder
-# import arrow
-# from copy import deepcopy
-# from functools import partial
-# from email.utils import parseaddr
-# from kivy.uix.scrollview import ScrollView
-
 
 CREDENTIALS = get_credentials()
 HTTP = CREDENTIALS.authorize(httplib2.Http())
 SERVICE = discovery.build('gmail', 'v1', http=HTTP)
 results = SERVICE.users().getProfile(userId='me').execute()
 SENDER = results.get('emailAddress', [])
-
-# SERVICE = None
-# try:
-#     credentials = get_credentials()
-#     http = credentials.authorize(httplib2.Http())
-#     SERVICE = build('gmail', 'v1', http=http)
-
-#     # Default the sender to be the authenticated user
-#     results = SERVICE.users().getProfile(userId='me').execute()
-#     SENDER = results.get('emailAddress', [])
-# except Exception as error:
-#     SERVICE = None
-#     print ("Error has occured: ", str(error))
-
-
-# # Builder.load_file('VOISemail.kv')
-# def check_internet():
-#     if SERVICE is None:
-#         ti = TextInput(text="Please check your Internet and restart VOIS",
-#                        size_hint=(None, None), size=(300, 300))
-#         pop = Popup(title='Error', content=ti,
-#                     size_hint=(None, None), size=(400, 400))
-#         pop.open()
 
 
 SLICE_LENGTH = 88
@@ -83,13 +31,6 @@ def slice(str):
         return str[:SLICE_LENGTH] + "..." if len(str) > SLICE_LENGTH else str
     else:
         return ''
-
-
-# def shrink_it(text, length):
-#     if text:
-#         return text[:length] + "..." if len(text) > length else text
-#     else:
-#         return ''
 
 
 class EmailScreen(Screen):
@@ -207,8 +148,6 @@ class SentScreen(Screen):
 reply_msg = {}
 forward_msg = {}
 
-# MSG_INFO = {}
-
 
 class MessageScreen(Screen):
 
@@ -233,22 +172,20 @@ class MessageScreen(Screen):
             if 'UNREAD' in msg['labels']:
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
 
-            reply_msg.clear()
-            reply_msg['to'] = parseaddr(msg['from'])[1]
-            reply_msg['subject'] = 'Re: ' + msg['subject']
-            reply_msg['body'] = '\n\n\nOn ' + str(msg['timestamp']) + ' <' + parseaddr(msg['from'])[1] + '> wrote:\n' + msg['body']
+        reply_msg.clear()
+        reply_msg['to'] = parseaddr(msg['from'])[1]
+        reply_msg['subject'] = 'Re: ' + msg['subject']
+        reply_msg['body'] = '\n\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' <' + parseaddr(msg['from'])[1] + '> wrote:\n' + msg['body']
 
-            self.body_widgets[1].text = 'Reply'
-        else:
-            forward_msg.clear()
-            forward_msg['addr'] = ''
-            forward_msg['subject'] = 'Fw: ' + msg['subject']
-            forward_msg['body'] = '\n\n\n' + '---------- Forwarded message ----------\n' + \
-                ' From: ' + SENDER + '\n' + \
-                ' Date: ' + str(msg['timestamp']) + '\n' + \
-                ' Subject: ' + msg['subject'] + '\n' + \
-                ' To: ' + msg['to'] + ' \n\n' + msg['body']
-            self.body_widgets[1].text = 'Close'
+        forward_msg.clear()
+        forward_msg['to'] = ''
+        forward_msg['subject'] = 'Fw: ' + msg['subject']
+        forward_msg['body'] = '\n\n\n' + '---------- Forwarded message ----------\n' + \
+            ' From: ' + msg['from'] + '\n' + \
+            ' Date: ' + str(arrow.get(msg['timestamp']).format()) + '\n' + \
+            ' Subject: ' + msg['subject'] + '\n' + \
+            ' To: ' + SENDER + ' \n\n' + msg['body']
+        self.body_widgets[1].text = 'Say \"email reply\" or \"email forward\"'
 
     def reset_widgets(self):
         self.remove_widgets()
@@ -284,66 +221,6 @@ class MessageScreen(Screen):
             self.ids.body_grid.remove_widget(widget)
         self.header_widgets.clear()
         self.body_widgets.clear()
-
-
-# class ComposeScreen(Screen):
-#     back_screen = ''
-
-#     def go_back(self):
-#         self.manager.current = self.back_screen
-
-#     def clear_inputs(self):
-#         self.back_screen = 'emailMain'
-#         self.ids.to_id.text = ''
-#         self.ids.subject_id.text = ''
-#         self.ids.body_id.text = ''
-
-#     def format_msg(self, from_inbox_forward, instance=None):
-#         self.back_screen = 'message'
-#         self.manager.current = 'compose'
-#         self.ids.to_id.text = '' if from_inbox_forward else MSG_INFO['addr']
-#         self.ids.subject_id.text = 'Fw: '+ MSG_INFO['subject'] \
-#                                     if from_inbox_forward \
-#                                     else MSG_INFO['subject']
-#         self.ids.body_id.text = MSG_INFO['forward_body'] \
-#                                 if from_inbox_forward \
-#                                 else MSG_INFO['body']
-
-
-#     def send_email(self):
-        check_internet()
-        recievers = self.ids.to_id.text
-        subject = self.ids.subject_id.text
-        body = self.ids.body_id.text
-        if recievers and (subject or body):
-            [x.strip() for x in recievers.split(';')]
-            recievers = recievers.split(';')
-            message = CreateMessage(SENDER, recievers, subject, body)
-            success, message = SendMessage(SERVICE, "me", message)
-            if success:
-                self.manager.current = 'emailMain'
-                self.manager.transition.direction = 'down'
-            else:
-                ti = TextInput(text=message, size_hint=(None, None),
-                           size=(300, 300))
-                pop = Popup(title='Error', content=ti,
-                            size_hint=(None, None), size=(400, 400))
-                pop.open()
-
-
-# NOT FULLY FUNCTIONAL COMPOSE SCREEN
-
-
-# <ComposeScreen>:
-#     on_pre_enter: root.reset_widgets()
-#     GridLayout:
-#         id: body_grid
-#         cols: 1
-#         GridLayout:
-#             id: header_grid
-#             cols: 2
-#             size_hint: (1, None)
-#             height: 120
 
 
 class ComposeScreen(Screen):

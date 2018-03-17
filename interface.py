@@ -60,7 +60,6 @@ sm.add_widget(vois_documents.documentResultsScreen(name='documentResults'))
 sm.add_widget(vois_websearch.WebScreen(name='web'))
 sm.add_widget(vois_websearch.ResultScreen(name='result'))
 
-
 def execute(data):
     action_type = data['ActionType'].lower()
     context = data['Context']
@@ -115,6 +114,24 @@ def execute(data):
         to = context['To']
         subject = context['Subject']
         message = context['Message']
+        time.sleep(0.5)
+        sm.current = 'compose'
+        screen = vois_email.ComposeScreen()
+        screen.compose_email(to, subject, message)
+
+    elif action_type == 'emailreply':
+        to = vois_email.reply_msg['to']
+        subject = vois_email.reply_msg['subject']
+        message = context['Message'] + vois_email.reply_msg['body']
+        time.sleep(0.5)
+        sm.current = 'compose'
+        screen = vois_email.ComposeScreen()
+        screen.compose_email(to, subject, message)
+    
+    elif action_type == 'emailforward':
+        to = context['To']
+        subject = vois_email.forward_msg['subject']
+        message = context['Message'] + vois_email.forward_msg['body']
         time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
@@ -287,6 +304,32 @@ def prompt():
     elif action_type == 'emailsent':
         data['ActionType'] = 'EmailSent'
 
+    elif action_type == 'emailreply':
+        if sm.current != 'message':
+            print('Error: Invalid action type')
+            return
+
+        message = input('Enter message: ')
+
+        data['ActionType'] = 'EmailReply'
+        data['Context'] = {
+            'Message': message
+        }
+
+    elif action_type == 'emailforward':
+        if sm.current != 'message':
+            print('Error: Invalid action type')
+            return
+
+        to = input('Enter to: ')
+        message = input('Enter message: ')
+
+        data['ActionType'] = 'EmailForward'
+        data['Context'] = {
+            'To': to,
+            'Message': message
+        }
+        
     elif action_type == 'emailopen':
         if sm.current != 'inbox' and sm.current != 'sent':
             print('Error: Invalid action type')

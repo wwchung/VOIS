@@ -18,6 +18,9 @@ import vois_websearch
 Builder.load_file('interface.kv')
 
 
+#Builder.load_file('documents.kv')
+
+
 # Define home screen
 class HomeScreen(Screen):
     pass
@@ -46,10 +49,12 @@ sm.add_widget(vois_email.SentScreen(name='sent'))
 sm.add_widget(vois_email.MessageScreen(name='message'))
 
 # Add all document screens
-sm.add_widget(vois_documents.docsScreen(name='docs'))
-sm.add_widget(vois_documents.newDocsScreen(name='newDocs'))
-sm.add_widget(vois_documents.prevDocsScreen(name='prevDocs'))
-sm.add_widget(vois_documents.listDocsScreen(name='listDocs'))
+sm.add_widget(vois_documents.documentHomeScreen(name='documentHome'))
+
+
+#sm.add_widget(vois_documents.newDocsScreen(name='newDocs'))
+#sm.add_widget(vois_documents.prevDocsScreen(name='prevDocs'))
+sm.add_widget(vois_documents.documentResultsScreen(name='documentResults'))
 
 # Add all web screens
 sm.add_widget(vois_websearch.WebScreen(name='web'))
@@ -59,6 +64,10 @@ sm.add_widget(vois_websearch.ResultScreen(name='result'))
 def execute(data):
     action_type = data['ActionType'].lower()
     context = data['Context']
+
+    print('')
+    print('Action:',action_type)
+    print('Context', context)
 
     if action_type == 'navigate':
         destination_screen = context['DestinationScreen'].lower()
@@ -73,7 +82,7 @@ def execute(data):
             sm.current = 'email'
 
         elif destination_screen == 'doc':
-            sm.current = 'docs'
+            sm.current = 'documentHome'
 
         elif destination_screen == 'web':
             sm.current = 'web'
@@ -142,25 +151,57 @@ def execute(data):
 
             # BUG
 
-    elif action_type == 'documentcreate':
-        pass
 
-        # TODO
+
+
+    elif action_type == 'documentcreate':
+
+        #Extract file and folder name
+        file_name = context['FileName'].lower()
+        folder_name = context['FolderName'].lower()
+
+        #Create new document
+        vois_documents.newDoc(folder_name,file_name)
+
 
     elif action_type == 'documentsearch':
-        pass
 
-        # TODO
+        #Extract folder name
+        folder_name = context['FolderName'].lower()
+
+        #Search Folder and load document results
+        sm.get_screen('documentResults').byFolder(folder_name)
+        sm.transition.direction = 'left'
+        sm.current = 'documentResults'
+
 
     elif action_type == 'documentrecent':
-        pass
+        
+        #Call top ten function
+        sm.get_screen('documentResults').topTen()
+        sm.transition.direction = 'left'
+        sm.current = 'documentResults'
 
-        # TODO
 
     elif action_type == 'documentopen':
-        pass
+        
+        #Construct document id 
+        doc_num = int(context['DocumentNumber'])
+        doc_id = 'doc_' + str(doc_num - 1)
 
-        # TODO
+        #Get the file
+        file = sm.get_screen('documentResults').ids[doc_id].text
+        #Remove the number from the file name
+        file = file.replace(str(doc_num) + '. ','') 
+        #Open the document
+        sm.get_screen('documentResults').openDoc(file)
+
+        #Return to the home screen
+        sm.current = 'home'
+        sm.transition.direction = 'left'
+
+
+        
 
     elif action_type == 'websearch':
         query = context['Query']
@@ -264,7 +305,7 @@ def prompt():
     elif action_type == 'documentsearch':
         folder_name = input('Enter folder name: ')
         
-        data['ActionType'] = 'EmailCompose'
+        data['ActionType'] = 'DocumentSearch'
         data['Context'] = {
             'FolderName': folder_name
         }

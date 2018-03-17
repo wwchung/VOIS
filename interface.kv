@@ -181,193 +181,90 @@
             text: ''
 
 
-<docsScreen>:
+<documentHomeScreen>:
     GridLayout:
         cols: 1
-        rows: 3
+        rows: 4
         Label:
             text: 'VOIS - Documents'
-        GridLayout:
-            cols: 2
-            rows: 1
-            Button:
-                text: 'New Document'
-                on_press:
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'newDocs'
-            Button:
-                text: 'Previous Documents'
-                on_press:
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'prevDocs'
-        GridLayout:
-            cols: 1
-            rows: 1
-            Button:
-                text: 'Back'
-                on_press:
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'home'
+            font_size: '32sp'
 
+        Button:
+            text: '1. Create document {fileName} in {folderName}'
+            font_size: '32sp'
 
-<newDocsScreen>
-    GridLayout:
-        cols: 1
-        rows: 4
+        Button:
+            text: '2. Search for documents in {folderName} folder'
+            font_size: '32sp'
 
-        Label:
-            text: 'VOIS - Documents - New Document'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-            Label:
-                text: 'Folder Name'
-
-            Label:
-                text: 'Document Name'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-            TextInput:
-                id: new_folder_id
-                multiline: False
-                focus: True
-
-            TextInput:
-                id: new_doc_id
-                multiline: False
-                focus: True
-                on_text_validate:
-                    root.manager.get_screen('newDocs').newDoc(root.manager.get_screen('newDocs').ids.new_folder_id.text,self.text)
-
-
-        GridLayout:
-            cols: 1
-            rows: 1
-
-            Button:
-                text: 'Back'
-                on_press:
-                    root.manager.get_screen('newDocs').clearInput()
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'docs'
+        Button:
+            text: '3. Search recent documents'
+            font_size: '32sp'
 
 
 
-<prevDocsScreen>
-    GridLayout:
-        cols: 1
-        rows: 4
-
-        Label:
-            text: 'VOIS - Documents - Previous Documents'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-            Label:
-                text: 'Top 10 Most Recently Modified'
-
-            Label:
-                text: 'Search Folder'
-
-        GridLayout:
-            cols: 2
-            rows: 1
-
-            Button:
-                text: 'Top 10'
-                on_press:
-                    root.manager.get_screen('listDocs').topTen()
-                    root.manager.transition.direction = 'left'
-                    root.manager.current = 'listDocs'
-
-            TextInput:
-                id: prev_folder_id
-                multiline: False
-                focus: True
-                on_text_validate:
-                    root.manager.get_screen('prevDocs').byFolder(self.text)
-
-        GridLayout:
-            cols: 1
-            rows: 1
-
-            Button:
-                text: 'Back'
-                on_press:
-                    root.manager.get_screen('prevDocs').clearInput()
-                    root.manager.transition.direction = 'right'
-                    root.manager.current = 'docs'
-
-
-<listDocsScreen>
+<documentResultsScreen>
     GridLayout:
         cols: 1
         rows: 12
         Label:
             id: title
             text: 'VOIS - Documents - Previous Documents - View'
+            font_size: '32sp'
+
+        Label:
+            text: 'To open: Open document number {number}'
+            font_size: '32sp'
+
         Button:
             id: doc_0
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+    
         Button:
             id: doc_1
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_2
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_3
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_4
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_5
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_6
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_7
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_8
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
+            font_size: '32sp'
+            
         Button:
             id: doc_9
             text: ''
-            on_press:
-                root.manager.get_screen('listDocs').openDoc(self.text)
-        Button:
-            text: 'Back'
-            on_press:
-                root.manager.transition.direction = 'right'
-                root.manager.current = 'prevDocs'
+            font_size: '32sp'
 
 
 <WebScreen>:

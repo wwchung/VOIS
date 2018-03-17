@@ -141,17 +141,11 @@ def execute(data):
             screen = vois_email.MessageScreen()
             screen.open_message(msg, True)
 
-            # BUG
-
         elif sm.current == 'sent':
             msg = vois_email.sent_messages[message_number - 1]
             sm.current = 'message'
             screen = vois_email.MessageScreen()
             screen.open_message(msg, False)
-
-            # BUG
-
-
 
 
     elif action_type == 'documentcreate':

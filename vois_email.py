@@ -13,6 +13,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import Screen
 import arrow
 import httplib2
+import re
 
 # from gmail.credential import get_credentials
 # from gmail.retrieve_email import GetInboxMessages
@@ -47,8 +48,8 @@ import httplib2
 CREDENTIALS = get_credentials()
 HTTP = CREDENTIALS.authorize(httplib2.Http())
 SERVICE = discovery.build('gmail', 'v1', http=HTTP)
-RESULTS = SERVICE.users().labels().list(userId='me').execute()
-SENDER = RESULTS.get('emailAddress', [])
+results = SERVICE.users().getProfile(userId='me').execute()
+SENDER = results.get('emailAddress', [])
 
 # SERVICE = None
 # try:
@@ -202,7 +203,7 @@ class SentScreen(Screen):
 
 
 reply_msg = {}
-
+forward_msg = {}
 
 # MSG_INFO = {}
 
@@ -218,7 +219,10 @@ class MessageScreen(Screen):
         else:
             self.header_widgets[1].text = msg['to']
         self.header_widgets[3].text = msg['subject']
-        self.body_widgets[0].text = msg['body']
+        try:
+            self.body_widgets[0].text = msg['body']
+        except Exception:
+            self.body_widgets[0].text = "Failed to retrieve the email body, please view it on the web./n"
 
         if inbox:
             # mark message as READ
@@ -226,12 +230,20 @@ class MessageScreen(Screen):
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
 
             reply_msg.clear()
-            reply_msg['to'] = parseaddr(msg['reply'])[1]
+            reply_msg['to'] = parseaddr(msg['from'])[1]
             reply_msg['subject'] = 'Re: ' + msg['subject']
             reply_msg['body'] = '\n\n\nOn ' + str(msg['timestamp']) + ' <' + parseaddr(msg['from'])[1] + '> wrote:\n' + msg['body']
 
             self.body_widgets[1].text = 'Reply'
         else:
+            forward_msg.clear()
+            forward_msg['addr'] = ''
+            forward_msg['subject'] = 'Fw: ' + msg['subject']
+            forward_msg['body'] = '\n\n\n' + '---------- Forwarded message ----------\n' + \
+                ' From: ' + SENDER + '\n' + \
+                ' Date: ' + str(msg['timestamp']) + '\n' + \
+                ' Subject: ' + msg['subject'] + '\n' + \
+                ' To: ' + msg['to'] + ' \n\n' + msg['body']
             self.body_widgets[1].text = 'Close'
 
     def reset_widgets(self):
@@ -268,59 +280,6 @@ class MessageScreen(Screen):
             self.ids.body_grid.remove_widget(widget)
         self.header_widgets.clear()
         self.body_widgets.clear()
-
-
-# <MessageScreen>:
-#     on_enter:
-#         root.manager.transition.direction = 'right'
-#     on_leave: root.manager.transition.direction = 'left'
-#     GridLayout:
-#         cols: 1
-#         rows: 3
-#         BoxLayout:
-#             size_hint: (1, None)
-#             height: 60
-#             id: message_btns
-#             Button:
-#                 text: 'Back'
-#                 size_hint: (.3, None)
-#                 height: 60
-#                 on_release:
-#                     root.go_back()
-#             Button:
-#                 id: compose_btn
-#                 text: 'Reply'
-#                 size_hint: (.7, None)
-#                 height: 60
-#         GridLayout:
-#             size_hint: (1, None)
-#             height: 120
-#             cols: 2
-#             rows: 2
-#             Label:
-#                 size_hint: (.2, None)
-#                 text: 'From:'
-#                 height: 60
-#             Label:
-#                 id: address_view_id
-#                 size_hint: (.8, None)
-#                 text: ''
-#                 text_size: self.width, None
-#                 height: 60
-#             Label:
-#                 size_hint: (.2, None)
-#                 text: 'Subject:'
-#                 height: 60
-#             Label:
-#                 id: subject_view_id
-#                 size_hint: (.8, None)
-#                 text: ''
-#                 text_size: self.width, None
-#                 height: 60
-#         TextInput:
-#             id: body_view_id
-#             text: '1'
-#             font_size: '24sp'
 
 
 # class MessageScreen(Screen):

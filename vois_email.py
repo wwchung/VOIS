@@ -14,6 +14,7 @@ from kivy.uix.screenmanager import Screen
 import arrow
 import httplib2
 import re
+import time
 
 # from gmail.credential import get_credentials
 # from gmail.retrieve_email import GetInboxMessages
@@ -219,6 +220,8 @@ class MessageScreen(Screen):
         else:
             self.header_widgets[1].text = msg['to']
         self.header_widgets[3].text = msg['subject']
+        time.sleep(0.5)
+        self.body_widgets[0].text = ''
         try:
             self.body_widgets[0].text = msg['body']
         except Exception:

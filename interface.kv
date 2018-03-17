@@ -128,57 +128,15 @@
 
 
 <ComposeScreen>:
+    on_pre_enter: root.reset_widgets()
     GridLayout:
+        id: body_grid
         cols: 1
-        rows: 3
-        BoxLayout:
-            size_hint: (.1, None)
-            height: 60
-            Button:
-                text: 'Back'
-                size_hint: (.3, None)
-                height: 60
-                font_size: '32sp'
-                on_release:
-                    root.manager.transition.direction = 'right'
-                    root.go_back()
-            Button:
-                text: 'Send'
-                size_hint: (.7, None)
-                height: 60
-                font_size: '32sp'
-                on_release:
-                    root.send_email()
         GridLayout:
-            size_hint: (.1, None)
-            height: 120
+            id: header_grid
             cols: 2
-            rows: 2
-            Label:
-                size_hint: (.2, None)
-                height: 60
-                font_size: '32sp'
-                text: 'To: '
-            TextInput:
-                id: to_id
-                size_hint: (.2, None)
-                height: 60
-                font_size: '32sp'
-                text: ''
-            Label:
-                size_hint: (.2, None)
-                height: 60
-                font_size: '32sp'
-                text: 'Subject: '
-            TextInput:
-                id: subject_id
-                size_hint: (.8, None)
-                height: 60
-                font_size: '32sp'
-                text: ''
-        TextInput:
-            id: body_id
-            text: ''
+            size_hint: (1, None)
+            height: 120
 
 
 <documentHomeScreen>:

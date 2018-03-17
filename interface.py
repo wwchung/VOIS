@@ -115,8 +115,15 @@ def execute(data):
         to = context['To']
         subject = context['Subject']
         message = context['Message']
+        time.sleep(0.5)
+        sm.current = 'compose'
+        screen = vois_email.ComposeScreen()
+        screen.compose_email(to, subject, message)
 
-        # TODO
+    elif action_type == 'emailsend':
+        screen = vois_email.ComposeScreen()
+        screen.send_email()
+        sm.current = 'email'
 
     elif action_type == 'emailinbox':
         sm.current = 'loading'
@@ -261,7 +268,7 @@ def prompt():
         subject = input('Enter subject: ')
         message = input('Enter message: ')
 
-        data['ActionType'] = 'EmailReply'
+        data['ActionType'] = 'EmailCompose'
         data['Context'] = {
             'To': to,
             'Subject': subject,
@@ -270,6 +277,12 @@ def prompt():
 
     elif action_type == 'emailinbox':
         data['ActionType'] = 'EmailInbox'
+
+    elif action_type == 'emailsend':
+        if sm.current != 'compose':
+            print('Error: Invalid action type')
+            return
+        data['ActionType'] = 'EmailSend'
 
     elif action_type == 'emailsent':
         data['ActionType'] = 'EmailSent'

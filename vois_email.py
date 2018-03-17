@@ -11,6 +11,7 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import Screen
+from kivy.uix.popup import Popup
 import arrow
 import httplib2
 import re
@@ -285,31 +286,31 @@ class MessageScreen(Screen):
         self.body_widgets.clear()
 
 
-class ComposeScreen(Screen):
-    back_screen = ''
+# class ComposeScreen(Screen):
+#     back_screen = ''
 
-    def go_back(self):
-        self.manager.current = self.back_screen
+#     def go_back(self):
+#         self.manager.current = self.back_screen
 
-    def clear_inputs(self):
-        self.back_screen = 'emailMain'
-        self.ids.to_id.text = ''
-        self.ids.subject_id.text = ''
-        self.ids.body_id.text = ''
+#     def clear_inputs(self):
+#         self.back_screen = 'emailMain'
+#         self.ids.to_id.text = ''
+#         self.ids.subject_id.text = ''
+#         self.ids.body_id.text = ''
 
-    def format_msg(self, from_inbox_forward, instance=None):
-        self.back_screen = 'message'
-        self.manager.current = 'compose'
-        self.ids.to_id.text = '' if from_inbox_forward else MSG_INFO['addr']
-        self.ids.subject_id.text = 'Fw: '+ MSG_INFO['subject'] \
-                                    if from_inbox_forward \
-                                    else MSG_INFO['subject']
-        self.ids.body_id.text = MSG_INFO['forward_body'] \
-                                if from_inbox_forward \
-                                else MSG_INFO['body']
+#     def format_msg(self, from_inbox_forward, instance=None):
+#         self.back_screen = 'message'
+#         self.manager.current = 'compose'
+#         self.ids.to_id.text = '' if from_inbox_forward else MSG_INFO['addr']
+#         self.ids.subject_id.text = 'Fw: '+ MSG_INFO['subject'] \
+#                                     if from_inbox_forward \
+#                                     else MSG_INFO['subject']
+#         self.ids.body_id.text = MSG_INFO['forward_body'] \
+#                                 if from_inbox_forward \
+#                                 else MSG_INFO['body']
 
 
-    def send_email(self):
+#     def send_email(self):
         check_internet()
         recievers = self.ids.to_id.text
         subject = self.ids.subject_id.text
@@ -345,47 +346,63 @@ class ComposeScreen(Screen):
 #             height: 120
 
 
-# class ComposeScreen(Screen):
+class ComposeScreen(Screen):
     
-#     header_widgets = []
-#     body_widgets = []
+    header_widgets = []
+    body_widgets = []
 
-#     def send_email(self, message):
-#         self.header_widgets[1].text = reply_msg['to']
-#         self.header_widgets[3].text = reply_msg['subject']
-#         self.body_widgets[0].text = message + reply_msg['body']
+    def compose_email(self, to, subject, body):
+        self.header_widgets[1].text = to
+        self.header_widgets[3].text = subject
+        self.body_widgets[0].text = body
 
-#     def reset_widgets(self):
-#         self.remove_widgets()
+    def send_email(self):
+        recievers = self.header_widgets[1].text
+        subject = self.header_widgets[3].text
+        body = self.body_widgets[0].text
+        if recievers and (subject or body):
+            [x.strip() for x in recievers.split(';')]
+            recievers = recievers.split(';')
+            message = CreateMessage(SENDER, recievers, subject, body)
+            success, message = SendMessage(SERVICE, "me", message)
+            if not success:
+                ti = TextInput(text=message, size_hint=(None, None),
+                           size=(300, 300))
+                pop = Popup(title='Error', content=ti,
+                            size_hint=(None, None), size=(400, 400))
+                pop.open()
 
-#         to_label = Label(text='To:', size_hint=(0.2, None), height=60)
-#         self.header_widgets.append(to_label)
-#         self.ids.header_grid.add_widget(to_label)
+    def reset_widgets(self):
+        self.remove_widgets()
 
-#         to_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
-#         self.header_widgets.append(to_text_input)
-#         self.ids.header_grid.add_widget(to_text_input)
+        to_label = Label(text='To:', size_hint=(0.2, None), height=60)
+        self.header_widgets.append(to_label)
+        self.ids.header_grid.add_widget(to_label)
 
-#         subject_label = Label(text='Subject:', size_hint=(0.2, None), height=60)
-#         self.header_widgets.append(subject_label)
-#         self.ids.header_grid.add_widget(subject_label)
+        to_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
+        self.header_widgets.append(to_text_input)
+        self.ids.header_grid.add_widget(to_text_input)
+
+        subject_label = Label(text='Subject:', size_hint=(0.2, None), height=60)
+        self.header_widgets.append(subject_label)
+        self.ids.header_grid.add_widget(subject_label)
         
-#         subject_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
-#         self.header_widgets.append(subject_text_input)
-#         self.ids.header_grid.add_widget(subject_text_input)
+        subject_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
+        self.header_widgets.append(subject_text_input)
+        self.ids.header_grid.add_widget(subject_text_input)
         
-#         body_text_input = TextInput(text='')
-#         self.body_widgets.append(body_text_input)
-#         self.ids.body_grid.add_widget(body_text_input)
+        body_text_input = TextInput(text='')
+        self.body_widgets.append(body_text_input)
+        self.ids.body_grid.add_widget(body_text_input)
 
-#         btn = Button(text='Send message', font_size='20sp', size_hint=(1, None), height=60)
-#         self.body_widgets.append(btn)
-#         self.ids.body_grid.add_widget(btn)
+        btn = Button(text='Say \"send message\"', font_size='20sp', size_hint=(1, None), height=60)
+        self.body_widgets.append(btn)
+        self.ids.body_grid.add_widget(btn)
 
-#     def remove_widgets(self):
-#         for widget in self.header_widgets:
-#             self.ids.header_grid.remove_widget(widget)
-#         for widget in self.body_widgets:
-#             self.ids.body_grid.remove_widget(widget)
-#         self.header_widgets.clear()
-#         self.body_widgets.clear()
+    def remove_widgets(self):
+        for widget in self.header_widgets:
+            self.ids.header_grid.remove_widget(widget)
+        for widget in self.body_widgets:
+            self.ids.body_grid.remove_widget(widget)
+        self.header_widgets.clear()
+        self.body_widgets.clear()

@@ -1,6 +1,6 @@
 '''
 Team VOIS
-Won-Woo Chung, Guangyu Li, Daniel u, Akihiro Ota
+Won-Woo Chung, Guangyu Li, Daniel Wu, Akihiro Ota
 EECS 498 Section 9
 '''
 from kivy.app import App
@@ -116,7 +116,6 @@ def execute(data):
         to = context['To']
         subject = context['Subject']
         message = context['Message']
-        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -125,7 +124,6 @@ def execute(data):
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
         message = context['Message'] + vois_email.reply_msg['body']
-        time.sleep(1)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -134,7 +132,6 @@ def execute(data):
         to = context['To']
         subject = vois_email.forward_msg['subject']
         message = context['Message'] + vois_email.forward_msg['body']
-        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -405,13 +402,18 @@ def error_check(image):
     execute(data)
 
 
-#connect to stream by ARN, and then get shards from description
+
 def listenToDB():
-    client = boto3.client('dynamodbstreams')
+
     arn = 'arn:aws:dynamodb:us-east-1:166631308062:table/Commands/stream/2018-03-17T00:48:45.175'
+    
+
+    #connect to stream by ARN, and then get shards from description
+    client = boto3.client('dynamodbstreams')
     description = client.describe_stream(StreamArn=arn)
     shardsList = description['StreamDescription']['Shards']
 
+    print("Connected to DynamoDB stream", arn)
     print("Number of shards in stream:", len(shardsList))
 
     for shard in shardsList:
@@ -450,30 +452,20 @@ def listenToDB():
             #usually recordsList is a single record, but sometimes multiple records may have been modified
             for record in recordsList:
 
-                creationDateTime = record['dynamodb']['ApproximateCreationDateTime']
-                tzinfo = creationDateTime.tzinfo
-                diff = datetime.datetime.now(tzinfo) - creationDateTime
+                
 
-                #double checks that any new records are ACTUALLY new
-                if diff < datetime.timedelta(minutes = 1):
-                    # print("> New Event Record of type", record['eventName'], "<")
+                #Checks to see if the new event record is an insertion
+                if record['eventName'] != "INSERT":
+                    print("Record is not a new insertion, skipping")
+                    print("\nListening for new records...")
+                    continue
 
-                    #Checks to see if the new event record is an insertion
-                    if record['eventName'] != "INSERT":
-                        print("Record is not a new insertion, skipping")
-                        print("\nListening for new records...")
-                        continue
+                #prints the attributes of the new record
+                image = record['dynamodb']['NewImage']
+                # for attr in image:
+                #     print("\t",attr, image[attr])
 
-                    #prints the attributes of the new record
-                    image = record['dynamodb']['NewImage']
-                    # for attr in image:
-                    #     print("\t",attr, image[attr])
-
-                    error_check(image)
-
-                #this shouldn't happen
-                else:
-                    print("ERROR: Old Record")
+                error_check(image)
 
                 print("\nListening for new records...")
 

@@ -7,6 +7,13 @@ Following these instructions to start the `VOIS` app:
 $ ./install_packages.sh
 ~~~
 
+
+#### AWS Setups:
+The access id and access key are avaliable on Canvas
+~~~
+$ aws configure
+~~~
+
 #### Start the VOIS app:
 ~~~
 $ python3 interface.py

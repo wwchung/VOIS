@@ -23,3 +23,7 @@ pip3 install --upgrade google-api-python-client
 pip3 install oauth2client
 
 pip3 install arrow
+
+pip3 install boto
+
+pip3 install awscli

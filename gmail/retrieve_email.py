@@ -71,7 +71,22 @@ def ModifyMessage(service, msg_id, msg_labels, user_id='me'):
           print ('An error occurred: %s', error)
 
 
-def GetInboxMessages(service, num_msg=7):
+def cleanMe(html):
+    soup = BeautifulSoup(html, "lxml") # create a new bs4 object from the html data loaded
+    for script in soup(["script", "style"]): # remove all javascript and stylesheet code
+        script.extract()
+    # get text
+    text = soup.get_text()
+    # break into lines and remove leading and trailing space on each
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    return text
+
+
+def GetInboxMessages(service, num_msg=6):
     messages = GetLabelMessages(service, numResults=num_msg)
     messages_info = []
     for msg in messages:
@@ -99,8 +114,7 @@ def GetInboxMessages(service, num_msg=7):
                 body_msg = msg_details.get('payload').get('body').get('data')
             body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))
             html_str = body_str.decode('UTF-8')
-            html_decoded = BeautifulSoup(html_str, "html.parser").get_text()
-            message_info['body'] = html_decoded
+            message_info['body'] = cleanMe(html_str)
         except:
             message_info['body'] = "Failed to retrieve the email body, \
                                     please view it on the web./n"
@@ -108,7 +122,7 @@ def GetInboxMessages(service, num_msg=7):
     return messages_info
 
 
-def GetSentMessages(service, num_msg=7):
+def GetSentMessages(service, num_msg=6):
     messages = GetLabelMessages(service, label_ids=["SENT"], numResults=num_msg)
     messages_info = []
     for msg in messages:
@@ -133,8 +147,7 @@ def GetSentMessages(service, num_msg=7):
                 body_msg = msg_details.get('payload').get('body').get('data')
             body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))
             html_str = body_str.decode('UTF-8')
-            html_decoded = BeautifulSoup(html_str, "html.parser").get_text()
-            message_info['body'] = html_decoded
+            message_info['body'] = cleanMe(html_str)
         except:
             message_info['body'] = "Failed to retrieve the email body, \
                                     please view it on the web./n"

@@ -26,7 +26,7 @@ def createPath(folder_name):
 	path = current_dir.split(sep,1)[0] #Remove vois from path. The path now is the Desktop
 
 	#If we don't have an empty folder name, then we want to add it to the path
-	if folder_name != '':
+	if folder_name != 'desktop':
 		path = path + folder_name + '/'
 
 	return path
@@ -90,6 +90,12 @@ def openDoc(doc_name):
 
 #Will create an open a new document within the specified folder with doc_name. Will save the document to the desktop if no folder name given
 def newDoc(folder_name,doc_name):
+
+    #Check to see if the file exists
+    if fileExists(folder_name,doc_name):
+        print('Error: File Already Exists')
+        return
+
     path = createPath(folder_name) #Get the path to save to
     #If this folder doesn't exist, then create a new folder
     if not folderExists(folder_name):
@@ -110,7 +116,7 @@ Returns:
 	a list of full paths to open files. Sorted by most recently modified (Ex: Desktop/folder1/Essay.docx)
 	a dictionary mapping file names (ex: Essay.docx) to full paths (Ex: Desktop/folder1/Essay.docx)
 '''
-def searchDirectory(folder_name=''):
+def searchFolder(folder_name=''):
 	documents_map = {} #Maps what the user sees to full paths so that the file can be opened
 	full_paths = [] #Need this for sorting capabilities
 
@@ -174,55 +180,12 @@ def topTenPrevDocs():
 
 
 #Document home Screen
-class docsScreen(Screen):
+class documentHomeScreen(Screen):
     pass
-
-#Previous documents menu Screen
-class prevDocsScreen(Screen):
-    
-    #Clears text input
-    def clearInput(self):
-        self.ids.prev_folder_id.text = ''
-
-    #Searches for word documents in a specific folder
-    def byFolder(self,folder_name):
-
-        #Check to see if the folder exists first. If not, display that the folder doesn't exist
-        if not folderExists(folder_name):
-            self.ids.prev_folder_id.text = 'Error: The Specified Folder Does Not Exist'
-            return
-        else:
-            self.clearInput()
-            self.manager.get_screen('listDocs').byFolder(folder_name)
-            self.manager.transition.direction = 'left'
-            self.manager.current = 'listDocs'
-
-
-#Create new document Screen
-class newDocsScreen(Screen):
-
-    #Clears the folder and document text input
-    def clearInput(self):
-        self.ids.new_folder_id.text = ''
-        self.ids.new_doc_id.text = ''
-
-    #Will create a new document within the specified folder
-    def newDoc(self,folder_name, doc_name):
-
-        if fileExists(folder_name,doc_name):
-            self.ids.new_doc_id.text = 'Error: File Already Exists'
-            return
-
-
-        newDoc(folder_name,doc_name)
-        self.clearInput()
-
-        self.manager.transition.direction = 'right'
-        self.manager.current = 'docs'
 
 
 #Screen where previous documents show up
-class listDocsScreen(Screen):
+class documentResultsScreen(Screen):
 
     data = {} #Maps files to their full path. Useful because don't want to display full path to user, but need it to open file
     # (ex: Essay.docx) maps to (ex: Desktop/folder1/Essay.docx)
@@ -243,25 +206,31 @@ class listDocsScreen(Screen):
     #Populates button text with file names
     def setButtonText(self,paths):
 
+        self.clearButtons() #Clear previous content
+
         #Only show the first 10 results
         if len(paths) > 10:
+
             for i in range(10):
                 doc_id = 'doc_' + str(i)
 
-                self.ids[doc_id].text = self.findDoc(paths[i])
+                self.ids[doc_id].text = str(i+1) + '. ' + self.findDoc(paths[i])
                 self.ids[doc_id].font_name = 'FZHTK'
 
         else:
             for i in range(len(paths)):
                 doc_id = 'doc_' + str(i)
-                self.ids[doc_id].text = self.findDoc(paths[i])
+                self.ids[doc_id].text = str(i+1) + '. ' + self.findDoc(paths[i])
 
 
 
     #Gets all word documents within a specific folder and displays them to the screen
     def byFolder(self,folder_name):
 
-        self.clearButtons() #Clear previous Button text
+        #First check that the folder exists
+        if not folderExists(folder_name):
+            print('Error: The Specified Folder Does Not Exist')
+            return
 
         #Set title
         if folder_name != '':
@@ -269,14 +238,13 @@ class listDocsScreen(Screen):
         else:
             self.ids.title.text = 'VOIS - Documents - Previous Documents - Desktop'
 
-        paths,self.data = searchDirectory(folder_name)
+        paths,self.data = searchFolder(folder_name)
 
         self.setButtonText(paths)
 
     #Gets top ten most recently modified documents and displays them to the screen
     def topTen(self):
 
-        self.clearButtons() #Clear previous Button text
         self.ids.title.text = 'VOIS - Documents - Previous Documents - Top 10' #Set title
 
         paths,self.data = topTenPrevDocs()
@@ -294,9 +262,6 @@ class listDocsScreen(Screen):
 
         #If this is a valid word document, open it
         if '.docx' in doc_name:
-
-            self.manager.transition.direction = 'right'
-            self.manager.current = 'prevDocs'
 
             file = self.data[doc_name]
             file = file.replace('.docx','',1) #Extract the docx off of the file

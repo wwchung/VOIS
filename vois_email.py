@@ -170,7 +170,7 @@ class MessageScreen(Screen):
         try:
             self.body_widgets[0].text = msg['body']
         except Exception:
-            self.body_widgets[0].text = "Failed to retrieve the email body, please view it on the web./n"
+            self.body_widgets[0].text = msg['snippet']
 
         if inbox:
             # mark message as READ

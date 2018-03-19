@@ -116,8 +116,9 @@ def GetInboxMessages(service, num_msg=6):
             html_str = body_str.decode('UTF-8')
             message_info['body'] = cleanMe(html_str)
         except:
-            message_info['body'] = "Failed to retrieve the email body, \
-                                    please view it on the web./n"
+            message_info['body'] = msg_details.get('snippet') + \
+            "\n================================================\n\n" + \
+            "Failed to retrieve the email body, please view it on the web./n"
         messages_info.append(message_info)
     return messages_info
 

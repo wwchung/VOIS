@@ -410,13 +410,14 @@ def error_check(image):
 def listenToDB():
 
     arn = 'arn:aws:dynamodb:us-east-1:166631308062:table/Commands/stream/2018-03-17T00:48:45.175'
-    print("Connecting to DynamoDB stream", arn)
+    
 
     #connect to stream by ARN, and then get shards from description
     client = boto3.client('dynamodbstreams')
     description = client.describe_stream(StreamArn=arn)
     shardsList = description['StreamDescription']['Shards']
 
+    print("Connected to DynamoDB stream", arn)
     print("Number of shards in stream:", len(shardsList))
 
     for shard in shardsList:

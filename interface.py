@@ -125,7 +125,7 @@ def execute(data):
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
         message = context['Message'] + vois_email.reply_msg['body']
-        time.sleep(0.5)
+        time.sleep(1)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -314,7 +314,7 @@ def error_check(image):
             print('Error: Invalid action type')
             return
 
-        message = input('Enter message: ')
+        message = context['Message']
 
         data['ActionType'] = 'EmailReply'
         data['Context'] = {
@@ -326,8 +326,8 @@ def error_check(image):
             print('Error: Invalid action type')
             return
 
-        to = input('Enter to: ')
-        message = input('Enter message: ')
+        to = context['To']
+        message = context['Message']
 
         data['ActionType'] = 'EmailForward'
         data['Context'] = {
@@ -340,7 +340,7 @@ def error_check(image):
             print('Error: Invalid action type')
             return
 
-        message_number = input('Enter message number: ')
+        message_number = context['EmailNumber']
 
         data['ActionType'] = 'EmailOpen'
         data['Context'] = {

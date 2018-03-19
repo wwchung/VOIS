@@ -157,8 +157,13 @@ class MessageScreen(Screen):
     def open_message(self, msg, inbox):
         if inbox:
             self.header_widgets[1].text = msg['from']
+            reply_to = msg.get('reply') if msg.get('reply') else (parseaddr(msg.get('from'))[1] if len(parseaddr(msg.get('from'))) > 1 else msg.get('from'))
+            forward_from = msg['from']
         else:
             self.header_widgets[1].text = msg['to']
+            reply_to = parseaddr(msg.get('to'))[1] if len(parseaddr(msg.get('to'))) > 1 else msg.get('to')
+            forward_from = SENDER
+        
         self.header_widgets[3].text = msg['subject']
         time.sleep(0.5)
         self.body_widgets[0].text = ''
@@ -171,21 +176,19 @@ class MessageScreen(Screen):
             # mark message as READ
             if 'UNREAD' in msg['labels']:
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
-
-        reply_msg.clear()
-        reply_msg['to'] = parseaddr(msg['from'])[1]
+        reply_msg['to'] = reply_to
         reply_msg['subject'] = 'Re: ' + msg['subject']
-        reply_msg['body'] = '\n\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' <' + parseaddr(msg['from'])[1] + '> wrote:\n' + msg['body']
-
+        reply_msg['body'] = '\n\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' \"' + reply_to + '\" wrote:\n' + msg['body']
         forward_msg.clear()
         forward_msg['to'] = ''
         forward_msg['subject'] = 'Fw: ' + msg['subject']
         forward_msg['body'] = '\n\n\n' + '---------- Forwarded message ----------\n' + \
-            ' From: ' + msg['from'] + '\n' + \
+            ' From: ' + forward_from + '\n' + \
             ' Date: ' + str(arrow.get(msg['timestamp']).format()) + '\n' + \
             ' Subject: ' + msg['subject'] + '\n' + \
-            ' To: ' + SENDER + ' \n\n' + msg['body']
-        self.body_widgets[1].text = 'Say \"email reply\" or \"email forward\"'
+            ' To: ' + reply_to + ' \n\n' + msg['body']
+        self.body_widgets[1].text = 'Say \"reply with with message {message}\" OR \n \"forward to {to} with message {message}\"'
+
 
     def reset_widgets(self):
         self.remove_widgets()
@@ -272,7 +275,7 @@ class ComposeScreen(Screen):
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='Say \"send message\"', font_size='20sp', size_hint=(1, None), height=60)
+        btn = Button(text='Say \"send email\"', font_size='20sp', size_hint=(1, None), height=60)
         self.body_widgets.append(btn)
         self.ids.body_grid.add_widget(btn)
 

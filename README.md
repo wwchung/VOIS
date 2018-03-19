@@ -7,20 +7,12 @@ Following these instructions to start the `VOIS` app:
 $ ./install_packages.sh
 ~~~
 
-<<<<<<< HEAD
 #### Configure credentials to listen to Alexa:
 ~~~
 $ aws configure
 ~~~
 Then type in the AWS access key ID and secret key given to you.
-=======
 
-#### AWS Setups:
-The access id and access key are avaliable on Canvas
-~~~
-$ aws configure
-~~~
->>>>>>> d8e6b44e8f51f0acaebb66867e36669dfd271e3e
 
 #### Start the VOIS app:
 ~~~

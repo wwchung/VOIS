@@ -20,7 +20,7 @@
             text: 'Document'
         Button:
             font_size: '34sp'
-            text: 'Web Search'
+            text: 'Web'
 
 
 <LoadingScreen>:
@@ -34,20 +34,15 @@
 <PhoneScreen>:
     BoxLayout:
         orientation: 'vertical'
-        BoxLayout:
-            Label:
-                text: 'Phone'
-                font_size: '45sp'
-            Label:
-                text: '\"Use voice to phone {number}\"\n\"Use voice to text {number} that {message}\"'
-                font_size: '20sp'
-                halign: 'center'
+        Label:
+            text: 'Phone'
+            font_size: '56sp'
         Button:
-            text: 'Call'
-            font_size: '45sp'
+            text: 'Use VOIS to call {number}'
+            font_size: '34sp'
         Button:
-            text: 'Text'
-            font_size: '45sp'
+            text: 'Use VOIS to text {number} that {message}'
+            font_size: '34sp'
 
 
 <CallScreen>:
@@ -67,23 +62,19 @@
 <EmailScreen>:
     BoxLayout:
         orientation: 'vertical'
-        BoxLayout:
-            Label:
-                text: 'Email'
-                font_size: '45sp'
-            Label:
-                text: '\"Open email inbox\"\n\"Open sent mail\"'
-                font_size: '20sp'
-                halign: 'center'
+        Label:
+            text: 'Email'
+            font_size: '56sp'
         Button:
-            text: 'Compose'
-            font_size: '45sp'
+            text: 'Open email inbox'
+            font_size: '34sp'
         Button:
-            text: 'Inbox'
-            font_size: '45sp'
+            text: 'Open sent mail'
+            font_size: '34sp'
         Button:
-            text: 'Sent mail'
-            font_size: '45sp'
+            text: 'Compose email to {to} with subject {subject}\nand message {message}'
+            font_size: '34sp'
+            halign: 'center'
 
 
 <InboxScreen>:
@@ -140,85 +131,70 @@
 
 
 <documentHomeScreen>:
-    GridLayout:
-        cols: 1
-        rows: 4
+    BoxLayout:
+        orientation: 'vertical'
         Label:
-            text: 'VOIS - Documents'
-            font_size: '32sp'
-
+            text: 'Document'
+            font_size: '56sp'
         Button:
-            text: '1. Create document {fileName} in {folderName}'
-            font_size: '32sp'
-
+            font_size: '34sp'
+            text: 'Create document {name} in folder {name}'
         Button:
-            text: '2. Search for documents in {folderName} folder'
-            font_size: '32sp'
-
+            font_size: '34sp'
+            text: 'Search for documents in folder {name}'
         Button:
-            text: '3. Search recent documents'
-            font_size: '32sp'
-
+            font_size: '34sp'
+            text: 'Search recent documents'
 
 
 <documentResultsScreen>
-    GridLayout:
-        cols: 1
-        rows: 12
-        Label:
-            id: title
-            text: 'VOIS - Documents - Previous Documents - View'
-            font_size: '32sp'
-
-        Label:
-            text: 'To open: Open document number {number}'
-            font_size: '32sp'
-
+    BoxLayout:
+		orientation: 'vertical'
+        BoxLayout:
+            Label:
+                id: title
+                text: 'Folder - Undefined'
+                font_size: '34sp'
+                halign: 'center'
+            Label:
+                text: '\"Open document number {number}\"'
+                font_size: '20sp'
         Button:
             id: doc_0
             text: ''
             font_size: '32sp'
-    
         Button:
             id: doc_1
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_2
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_3
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_4
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_5
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_6
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_7
             text: ''
             font_size: '32sp'
-            
         Button:
             id: doc_8
             text: ''
-            font_size: '32sp'
-            
+            font_size: '32sp' 
         Button:
             id: doc_9
             text: ''
@@ -228,18 +204,11 @@
 <WebScreen>:
 	BoxLayout:
 	    orientation: 'vertical'
-        BoxLayout:
-            Label:
-                text: 'Web Search'
-                font_size: '45sp'
-            Label:
-                text: '\"Search web for {query}\"'
-                font_size: '20sp'
-	    TextInput:
-	    	id: search_input
-	    	font_size: '45sp'
+        Label:
+            text: 'Web Search'
+            font_size: '56sp'
         Button:
-            text: 'Google Search'
+            text: 'Search web for {query}'
             font_size: '45sp'
 
 

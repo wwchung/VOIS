@@ -234,9 +234,9 @@ class documentResultsScreen(Screen):
 
         #Set title
         if folder_name != '':
-            self.ids.title.text = 'VOIS - Documents - Previous Documents - ' + folder_name
+            self.ids.title.text = 'Folder - ' + folder_name
         else:
-            self.ids.title.text = 'VOIS - Documents - Previous Documents - Desktop'
+            self.ids.title.text = 'Folder - Desktop'
 
         paths,self.data = searchFolder(folder_name)
 

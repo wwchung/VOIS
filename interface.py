@@ -82,7 +82,7 @@ def execute(data):
         elif destination_screen == 'email':
             sm.current = 'email'
 
-        elif destination_screen == 'doc':
+        elif destination_screen == 'documents' or destination_screen == 'document':
             sm.current = 'documentHome'
 
         elif destination_screen == 'web':
@@ -98,7 +98,7 @@ def execute(data):
         sm.current = 'call'
         screen = vois_phone.CallScreen()
         screen.call(destination_number)
-        time.sleep(1)
+        time.sleep(3)
         sm.current = current_screen
 
     elif action_type == 'phonetext':
@@ -109,7 +109,7 @@ def execute(data):
         sm.current = 'text'
         screen = vois_phone.TextScreen()
         screen.text(destination_number, message)
-        time.sleep(1)
+        time.sleep(3)
         sm.current = current_screen
 
     elif action_type == 'emailcompose':
@@ -278,7 +278,6 @@ def error_check(image):
     elif action_type == 'phonetext':
         destination_number = str(context['DestinationNumber'])
         message = context['Message']
-
         data['ActionType'] = 'PhoneText'
         data['Context'] = {
             'DestinationNumber': destination_number,

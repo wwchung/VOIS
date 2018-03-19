@@ -187,7 +187,7 @@ class MessageScreen(Screen):
             ' Date: ' + str(arrow.get(msg['timestamp']).format()) + '\n' + \
             ' Subject: ' + msg['subject'] + '\n' + \
             ' To: ' + reply_to + ' \n\n' + msg['body']
-        self.body_widgets[1].text = 'Say \"reply with with message {message}\" OR \n \"forward to {to} with message {message}\"'
+        self.body_widgets[1].text = 'Say \"reply with message {message}\" OR \n \"forward to {to} with message {message}\"'
 
 
     def reset_widgets(self):

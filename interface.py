@@ -116,7 +116,6 @@ def execute(data):
         to = context['To']
         subject = context['Subject']
         message = context['Message']
-        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -125,7 +124,6 @@ def execute(data):
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
         message = context['Message'] + vois_email.reply_msg['body']
-        time.sleep(1)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -134,7 +132,6 @@ def execute(data):
         to = context['To']
         subject = vois_email.forward_msg['subject']
         message = context['Message'] + vois_email.forward_msg['body']
-        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)

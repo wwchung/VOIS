@@ -24,11 +24,6 @@ pip3 install oauth2client
 
 pip3 install arrow
 
-<<<<<<< HEAD
 pip3 install boto3
-pip3 install awscli
-=======
-pip3 install boto
 
 pip3 install awscli
->>>>>>> d8e6b44e8f51f0acaebb66867e36669dfd271e3e

@@ -1,6 +1,6 @@
 '''
 Team VOIS
-Won-Woo Chung, Guangyu Li, Daniel Wu, Akihiro Ota
+Won-Woo Chung, Guangyu Li, Daniel u, Akihiro Ota
 EECS 498 Section 9
 '''
 from kivy.app import App
@@ -12,7 +12,9 @@ import vois_phone
 import vois_email
 import vois_documents
 import vois_websearch
-
+import boto3
+import datetime
+import ast
 
 # Load kv file
 Builder.load_file('interface.kv')
@@ -245,17 +247,20 @@ def execute(data):
 
         screen.open_url(result_number)
 
+    elif action_type == 'exit':
+        App.get_running_app().stop()
 
-def prompt():
-    print()
-    action_type = input('Enter action type: ').lower()
+
+def error_check(image):
+    action_type = image['ActionType']['S'].lower()
+    context = ast.literal_eval(image['Context']['S'])
     data = {
         'ActionType': '',
         'Context': {}
     }
 
     if action_type == 'navigate':
-        destionation_screen = input('Enter destination screen: ')
+        destionation_screen = context['DestinationScreen']
         
         data['ActionType'] = 'Navigate'
         data['Context'] = {
@@ -263,16 +268,16 @@ def prompt():
         }
 
     elif action_type == 'phonecall':
-        destination_number = input('Enter destination number: ')
-        
+        destination_number = str(context['DestinationNumber'])
+
         data['ActionType'] = 'PhoneCall'
         data['Context'] = {
             'DestinationNumber': destination_number
         }
 
     elif action_type == 'phonetext':
-        destination_number = input('Enter destination number: ')
-        message = input('Enter message: ')
+        destination_number = str(context['DestinationNumber'])
+        message = context['Message']
 
         data['ActionType'] = 'PhoneText'
         data['Context'] = {
@@ -281,9 +286,9 @@ def prompt():
         }
 
     elif action_type == 'emailcompose':
-        to = input('Enter to: ')
-        subject = input('Enter subject: ')
-        message = input('Enter message: ')
+        to = context['To']
+        subject = context['Subject']
+        message = context['Message']
 
         data['ActionType'] = 'EmailCompose'
         data['Context'] = {
@@ -343,8 +348,8 @@ def prompt():
         }
 
     elif action_type == 'documentcreate':
-        file_name = input('Enter file name: ')
-        folder_name = input('Enter folder name: ')
+        file_name = context['FileName']
+        folder_name = context['FolderName']
         
         data['ActionType'] = 'DocumentCreate'
         data['Context'] = {
@@ -353,7 +358,7 @@ def prompt():
         }
 
     elif action_type == 'documentsearch':
-        folder_name = input('Enter folder name: ')
+        folder_name = context['FolderName']
         
         data['ActionType'] = 'DocumentSearch'
         data['Context'] = {
@@ -364,7 +369,7 @@ def prompt():
         data['ActionType'] = 'DocumentRecent'
 
     elif action_type == 'documentopen':
-        document_number = input('Enter document number: ')
+        document_number = context['DocumentNumber']
         
         data['ActionType'] = 'DocumentOpen'
         data['Context'] = {
@@ -372,7 +377,7 @@ def prompt():
         }
 
     elif action_type == 'websearch':
-        query = input('Enter query: ')
+        query = context['Query']
 
         data['ActionType'] = 'WebSearch'
         data['Context'] = {
@@ -384,13 +389,16 @@ def prompt():
             print('Error: Invalid action type')
             return
 
-        result_number = input('Enter result number: ')
+        result_number = context['ResultNumber']
 
         data['ActionType'] = 'WebOpen'
         data['Context'] = {
             'ResultNumber': result_number
         }
 
+    elif action_type == 'exit':
+        data['ActionType'] = 'Exit'
+    
     else:
         print('Error: Invalid action type')
         return
@@ -398,10 +406,89 @@ def prompt():
     execute(data)
 
 
-def loop():
-    while True:
-        time.sleep(0.1)
-        prompt()
+#connect to stream by ARN, and then get shards from description
+def listenToDB():
+    client = boto3.client('dynamodbstreams')
+    arn = 'arn:aws:dynamodb:us-east-1:166631308062:table/Commands/stream/2018-03-17T00:48:45.175'
+    description = client.describe_stream(StreamArn=arn)
+    shardsList = description['StreamDescription']['Shards']
+
+    print("Number of shards in stream:", len(shardsList))
+
+    for shard in shardsList:
+
+        shardID = shard['ShardId']
+
+        #skip shard if it's closed (it will not be receiving any new records)
+        if 'EndingSequenceNumber' in shard['SequenceNumberRange']:
+            print("Shard ID ending in ", shardID[-8:], "is closed")
+            continue
+
+        print("Shard open, processing shard ID:", shardID[-8:])
+
+        #get an iterator result for the open shard
+        #this iterator looks at records that appear only after this function has been called
+
+        getShardIteratorResult = client.get_shard_iterator(
+            StreamArn=arn,
+            ShardId=shardID,
+            ShardIteratorType='LATEST'
+        )
+
+        shardIterator = getShardIteratorResult['ShardIterator']
+
+        print("\nListening for new records...")
+
+        #begin iterating through shards from the parent 
+        while shardIterator is not None:
+
+
+            #get any new records that may appear
+            getRecordsResult = client.get_records(ShardIterator=shardIterator)
+            recordsList = getRecordsResult['Records']
+
+
+            #usually recordsList is a single record, but sometimes multiple records may have been modified
+            for record in recordsList:
+
+                creationDateTime = record['dynamodb']['ApproximateCreationDateTime']
+                tzinfo = creationDateTime.tzinfo
+                diff = datetime.datetime.now(tzinfo) - creationDateTime
+
+                #double checks that any new records are ACTUALLY new
+                if diff < datetime.timedelta(minutes = 1):
+                    # print("> New Event Record of type", record['eventName'], "<")
+
+                    #Checks to see if the new event record is an insertion
+                    if record['eventName'] != "INSERT":
+                        print("Record is not a new insertion, skipping")
+                        print("\nListening for new records...")
+                        continue
+
+                    #prints the attributes of the new record
+                    image = record['dynamodb']['NewImage']
+                    # for attr in image:
+                    #     print("\t",attr, image[attr])
+
+                    error_check(image)
+
+                #this shouldn't happen
+                else:
+                    print("ERROR: Old Record")
+
+                print("\nListening for new records...")
+
+            #move on to the next shard iterator
+            if 'NextShardIterator' in getRecordsResult:
+                shardIterator = getRecordsResult['NextShardIterator']
+
+                #print("Moving to shard iterator ending in", shardIterator[-8:])
+            else: 
+                #reached the end of a shard sequence, which means it has closed.
+                shardIterator = None
+                break
+
+        print("Reached end of shardIterators for shardID ", shardID, ", stopped listening.")
 
 
 class VOIS(App):
@@ -411,7 +498,7 @@ class VOIS(App):
 
 
 if __name__ == '__main__':
-    t = Thread(target=loop)
+    t = Thread(target=listenToDB)
     t.daemon = True     # Stop thread at shutdown
     t.start()
     VOIS().run()

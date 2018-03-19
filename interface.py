@@ -456,30 +456,20 @@ def listenToDB():
             #usually recordsList is a single record, but sometimes multiple records may have been modified
             for record in recordsList:
 
-                creationDateTime = record['dynamodb']['ApproximateCreationDateTime']
-                tzinfo = creationDateTime.tzinfo
-                diff = datetime.datetime.now(tzinfo) - creationDateTime
+                
 
-                #double checks that any new records are ACTUALLY new
-                if diff < datetime.timedelta(minutes = 1):
-                    # print("> New Event Record of type", record['eventName'], "<")
+                #Checks to see if the new event record is an insertion
+                if record['eventName'] != "INSERT":
+                    print("Record is not a new insertion, skipping")
+                    print("\nListening for new records...")
+                    continue
 
-                    #Checks to see if the new event record is an insertion
-                    if record['eventName'] != "INSERT":
-                        print("Record is not a new insertion, skipping")
-                        print("\nListening for new records...")
-                        continue
+                #prints the attributes of the new record
+                image = record['dynamodb']['NewImage']
+                # for attr in image:
+                #     print("\t",attr, image[attr])
 
-                    #prints the attributes of the new record
-                    image = record['dynamodb']['NewImage']
-                    # for attr in image:
-                    #     print("\t",attr, image[attr])
-
-                    error_check(image)
-
-                #this shouldn't happen
-                else:
-                    print("ERROR: Old Record")
+                error_check(image)
 
                 print("\nListening for new records...")
 

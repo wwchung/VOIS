@@ -234,6 +234,7 @@ class ComposeScreen(Screen):
     def compose_email(self, to, subject, body):
         self.header_widgets[1].text = to
         self.header_widgets[3].text = subject
+        self.body_widgets[0].text = ''
         self.body_widgets[0].text = body
 
     def send_email(self):
@@ -275,7 +276,7 @@ class ComposeScreen(Screen):
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='Say \"send email\"', font_size='20sp', size_hint=(1, None), height=60)
+        btn = Button(text='\"send email\"', font_size='20sp', size_hint=(1, None), height=60)
         self.body_widgets.append(btn)
         self.ids.body_grid.add_widget(btn)
 

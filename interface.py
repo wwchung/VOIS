@@ -159,12 +159,18 @@ def execute(data):
         message_number = int(context['MessageNumber'])
 
         if sm.current == 'inbox':
+            if int(message_number) > min(7, len(vois_email.inbox_messages)):
+                print('Error: Invalid email number')
+                return
             msg = vois_email.inbox_messages[message_number - 1]
             sm.current = 'message'
             screen = vois_email.MessageScreen()
             screen.open_message(msg, True)
 
         elif sm.current == 'sent':
+            if int(message_number) > min(7, len(vois_email.sent_messages)):
+                print('Error: Invalid email number')
+                return
             msg = vois_email.sent_messages[message_number - 1]
             sm.current = 'message'
             screen = vois_email.MessageScreen()
@@ -238,7 +244,7 @@ def execute(data):
 
         screen = vois_websearch.ResultScreen()
 
-        if int(result_number) > min(5, len(screen.results)):
+        if int(result_number) > min(6, len(screen.results)):
             print('Error: Invalid result number')
             return
 
@@ -337,7 +343,7 @@ def error_check(image):
             return
 
         message_number = context['EmailNumber']
-
+        
         data['ActionType'] = 'EmailOpen'
         data['Context'] = {
             'MessageNumber': message_number
@@ -367,6 +373,10 @@ def error_check(image):
     elif action_type == 'documentopen':
         document_number = context['DocumentNumber']
         
+        if int(document_number) > 10:
+            print('Error: Invalid entry')
+            return
+
         data['ActionType'] = 'DocumentOpen'
         data['Context'] = {
 		    'DocumentNumber': document_number

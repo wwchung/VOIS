@@ -1,5 +1,7 @@
 # VOIS
 
+#### NOTE: VOIS app currently supports only retina resolution
+
 Following these instructions to start the `VOIS` app:
 
 #### Package Installations:

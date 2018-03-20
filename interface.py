@@ -5,6 +5,7 @@ EECS 498 Section 9
 '''
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager, Screen
 from threading import Thread
 import time
@@ -495,6 +496,8 @@ def listenToDB():
 class VOIS(App):
 
     def build(self):
+        Config.set('kivy', 'exit_on_escape', '0')
+        Config.write()
         return sm
 
 

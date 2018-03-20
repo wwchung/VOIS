@@ -209,7 +209,7 @@ class MessageScreen(Screen):
         self.header_widgets.append(subject_label)
         self.ids.header_grid.add_widget(subject_label)
         
-        body_text_input = TextInput(text='')
+        body_text_input = TextInput(text='', font_size='20sp')
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
@@ -256,23 +256,23 @@ class ComposeScreen(Screen):
     def reset_widgets(self):
         self.remove_widgets()
 
-        to_label = Label(text='To:', size_hint=(0.2, None), height=60)
+        to_label = Label(text='To:', font_size='20sp', size_hint=(0.2, None), height=60)
         self.header_widgets.append(to_label)
         self.ids.header_grid.add_widget(to_label)
 
-        to_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
+        to_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=60)
         self.header_widgets.append(to_text_input)
         self.ids.header_grid.add_widget(to_text_input)
 
-        subject_label = Label(text='Subject:', size_hint=(0.2, None), height=60)
+        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=60)
         self.header_widgets.append(subject_label)
         self.ids.header_grid.add_widget(subject_label)
         
-        subject_text_input = TextInput(text='', size_hint=(0.8, None), height=60)
+        subject_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=60)
         self.header_widgets.append(subject_text_input)
         self.ids.header_grid.add_widget(subject_text_input)
         
-        body_text_input = TextInput(text='')
+        body_text_input = TextInput(text='', font_size='20sp')
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 

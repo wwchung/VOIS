@@ -117,6 +117,8 @@ def execute(data):
         to = context['To']
         subject = context['Subject']
         message = context['Message']
+        sm.current = 'loading'
+        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -125,6 +127,8 @@ def execute(data):
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
         message = context['Message'] + vois_email.reply_msg['body']
+        sm.current = 'loading'
+        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -133,6 +137,8 @@ def execute(data):
         to = context['To']
         subject = vois_email.forward_msg['subject']
         message = context['Message'] + vois_email.forward_msg['body']
+        sm.current = 'loading'
+        time.sleep(0.5)
         sm.current = 'compose'
         screen = vois_email.ComposeScreen()
         screen.compose_email(to, subject, message)
@@ -140,6 +146,8 @@ def execute(data):
     elif action_type == 'emailsend':
         screen = vois_email.ComposeScreen()
         screen.send_email()
+        sm.current = 'loading'
+        time.sleep(0.5)
         sm.current = 'email'
 
     elif action_type == 'emailinbox':
@@ -164,6 +172,8 @@ def execute(data):
                 print('Error: Invalid email number')
                 return
             msg = vois_email.inbox_messages[message_number - 1]
+            sm.current = 'loading'
+            time.sleep(0.5)
             sm.current = 'message'
             screen = vois_email.MessageScreen()
             screen.open_message(msg, True)
@@ -173,6 +183,8 @@ def execute(data):
                 print('Error: Invalid email number')
                 return
             msg = vois_email.sent_messages[message_number - 1]
+            sm.current = 'loading'
+            time.sleep(0.5)
             sm.current = 'message'
             screen = vois_email.MessageScreen()
             screen.open_message(msg, False)

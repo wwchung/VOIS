@@ -178,11 +178,11 @@ class MessageScreen(Screen):
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
         reply_msg['to'] = reply_to
         reply_msg['subject'] = 'Re: ' + msg['subject']
-        reply_msg['body'] = '\n\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' \"' + reply_to + '\" wrote:\n' + msg['body']
+        reply_msg['body'] = '\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' \"' + reply_to + '\" wrote:\n' + msg['body']
         forward_msg.clear()
         forward_msg['to'] = ''
         forward_msg['subject'] = 'Fw: ' + msg['subject']
-        forward_msg['body'] = '\n\n\n' + '---------- Forwarded message ----------\n' + \
+        forward_msg['body'] = '\n\n' + '---------- Forwarded message ----------\n' + \
             ' From: ' + forward_from + '\n' + \
             ' Date: ' + str(arrow.get(msg['timestamp']).format()) + '\n' + \
             ' Subject: ' + msg['subject'] + '\n' + \

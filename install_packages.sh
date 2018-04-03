@@ -29,3 +29,5 @@ pip3 install boto3
 pip3 install awscli
 
 pip3 install lxml
+
+pip3 install pynput

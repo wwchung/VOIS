@@ -17,12 +17,21 @@ import boto3
 import datetime
 import ast
 
+#Necessary for application switching
+from pynput.keyboard import Key, Controller
+import time
+
+
+
+
 # Load kv file
 Builder.load_file('kv/home.kv')
 Builder.load_file('kv/phone.kv')
 Builder.load_file('kv/email.kv')
 Builder.load_file('kv/document.kv')
 Builder.load_file('kv/web.kv')
+
+switch = False #A global variable for the application switching feature
 
 
 # Define home screen
@@ -64,6 +73,9 @@ sm.add_widget(vois_documents.documentResultsScreen(name='documentResults'))
 sm.add_widget(vois_websearch.WebScreen(name='web'))
 sm.add_widget(vois_websearch.ResultScreen(name='result'))
 
+
+
+#Execute Commands
 def execute(data):
     action_type = data['ActionType'].lower()
     context = data['Context']
@@ -264,10 +276,35 @@ def execute(data):
 
         screen.open_url(result_number)
 
+        sm.current = 'home' #Switch back to home after the user opens a link
+
+
+
+
+
+    elif action_type == 'startswitch':
+        #Start switching function
+        print('About to start switching')
+
+        switcher = Thread(target=switchApplications)
+        switcher.start()
+
+
+    elif action_type == 'stopswitch':
+        #Set global switch mode variable to false
+        print('About to stop switching')
+
+        global switch
+        switch = False
+
+
+
     elif action_type == 'exit':
         App.get_running_app().stop()
 
 
+
+#Check commands for errors
 def error_check(image):
     action_type = image['ActionType']['S'].lower()
     context = ast.literal_eval(image['Context']['S'])
@@ -418,7 +455,18 @@ def error_check(image):
 
     elif action_type == 'exit':
         data['ActionType'] = 'Exit'
+
+
+    #Start and stop application switching
+    elif action_type == 'startswitch':
+
+        data['ActionType'] = 'StartSwitch'
+        data['Context'] = {}
+    elif action_type == 'stopswitch':
+        data['ActionType'] = 'StopSwitch'
+        data['Context'] = {}
     
+
     else:
         print('Error: Invalid action type')
         return
@@ -426,7 +474,7 @@ def error_check(image):
     execute(data)
 
 
-
+#Listens to dynamoDB for new commands
 def listenToDB():
 
     arn = 'arn:aws:dynamodb:us-east-1:166631308062:table/Commands/stream/2018-03-17T00:48:45.175'
@@ -504,6 +552,29 @@ def listenToDB():
                 break
 
         print("Reached end of shardIterators for shardID ", shardID, ", stopped listening.")
+
+
+#A function to switch applications
+def switchApplications():
+    #Takes control of the keyboard and changes the application that is focused
+    keyboard = Controller()
+
+    global switch
+    switch = True #Set switch mode to true
+
+    #Will rotate through open applications. Switches every five seconds to leave time for voice commands
+    with keyboard.pressed(Key.cmd):
+
+        while switch:
+            keyboard.press(Key.tab)
+            keyboard.release(Key.tab)
+
+            #Insert check to see when to stop
+            if not switch:
+                break
+
+            time.sleep(5) #Give time for the user to tell Alexa to stop switching
+
 
 
 class VOIS(App):

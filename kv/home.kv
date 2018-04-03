@@ -1,0 +1,37 @@
+<HomeScreen>:
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'VOIS'
+                font_size: '45sp'
+                color: (1, 0.796875, 0.0234375, 1)
+            Label:
+                text: 'Use voice commands anywhere in the app'
+                font_size: '20sp'
+                halign: 'center'
+        Button:
+            font_size: '34sp'
+            text: 'Open phone screen'
+        Button:
+            font_size: '34sp'
+            text: 'Open email screen'
+        Button:
+            font_size: '34sp'
+            text: 'Open document screen'
+        Button:
+            font_size: '34sp'
+            text: 'Open web screen'
+
+<LoadingScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Loading...'
+            font_size: '56sp'

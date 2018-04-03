@@ -1,0 +1,25 @@
+<PhoneScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Phone'
+            font_size: '56sp'
+        Button:
+            text: 'Use VOIS to call {number}'
+            font_size: '34sp'
+        Button:
+            text: 'Use VOIS to text {number} that {message}'
+            font_size: '34sp'
+
+<CallScreen>:
+    on_pre_enter: root.reset_label()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+
+<TextScreen>:
+    on_pre_enter: root.reset_label()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+        

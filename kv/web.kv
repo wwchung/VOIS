@@ -1,0 +1,23 @@
+<WebScreen>:
+	BoxLayout:
+	    orientation: 'vertical'
+        Label:
+            text: 'Web'
+            font_size: '56sp'
+        Button:
+            text: 'Search web for {query}'
+            font_size: '45sp'
+
+
+<ResultScreen>:
+    on_pre_enter: root.reset_buttons()
+	BoxLayout:
+        id: box
+		orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'Search Results'
+                font_size: '45sp'
+            Label:
+                text: '\"Open result number {number}\"'
+                font_size: '20sp'

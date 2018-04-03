@@ -1,0 +1,68 @@
+<EmailScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: 'Email'
+            font_size: '56sp'
+        Button:
+            text: 'Open email inbox'
+            font_size: '34sp'
+        Button:
+            text: 'Open sent mail'
+            font_size: '34sp'
+        Button:
+            text: 'Compose email to {to} with subject {subject}\nand message {message}'
+            font_size: '34sp'
+            halign: 'center'
+
+<InboxScreen>:
+    on_pre_enter: root.reset_buttons()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'Inbox'
+                font_size: '45sp'
+            Label:
+                text: '\"Open email number {number}\"'
+                font_size: '20sp'
+                halign: 'center'
+
+
+<SentScreen>:
+    on_pre_enter: root.reset_buttons()
+    BoxLayout:
+        id: box
+        orientation: 'vertical'
+        BoxLayout:
+            Label:
+                text: 'Sent Mail'
+                font_size: '45sp'
+            Label:
+                text: '\"Open email number {number}\"'
+                font_size: '20sp'
+
+
+<MessageScreen>:
+    on_pre_enter: root.reset_widgets()
+    GridLayout:
+        id: body_grid
+        cols: 1
+        GridLayout:
+            id: header_grid
+            cols: 2
+            size_hint: (1, None)
+            height: 240
+
+
+<ComposeScreen>:
+    on_pre_enter: root.reset_widgets()
+    GridLayout:
+        id: body_grid
+        cols: 1
+        GridLayout:
+            id: header_grid
+            cols: 2
+            size_hint: (1, None)
+            height: 120

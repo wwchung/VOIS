@@ -1,8 +1,8 @@
 # VOIS
 
 #### Note:
-- Support only macOS due to chrome_path in vois_websearch.py
-- Support only retina resolution (otherwise, text might overflow)
+- Supports only macOS due to chrome_path in vois_websearch.py
+- Supports only retina resolution (otherwise, text can overflow)
 
 Following these instructions to start the `VOIS` app:
 

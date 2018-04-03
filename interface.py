@@ -18,10 +18,11 @@ import datetime
 import ast
 
 # Load kv file
-Builder.load_file('interface.kv')
-
-
-#Builder.load_file('documents.kv')
+Builder.load_file('kv/home.kv')
+Builder.load_file('kv/phone.kv')
+Builder.load_file('kv/email.kv')
+Builder.load_file('kv/document.kv')
+Builder.load_file('kv/web.kv')
 
 
 # Define home screen

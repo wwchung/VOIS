@@ -28,9 +28,9 @@ def SendMessage(service, user_id, message):
   try:
       message = service.users().messages().send(userId=user_id, body=message)\
                 .execute()
-      # print ('Message Id: %s' % message['id'])
       return True, message
   except errors.HttpError as error:
+      print('An error occurred: %s' % error)
       return False, ('An error occurred: %s' % error)
 
 
@@ -47,11 +47,10 @@ def CreateMessage(sender, to, subject, message_text):
     An object containing a base64url encoded email object.
   """
   message = MIMEText(message_text)
-  message['To'] = ",".join(to)
-  message['From'] = sender
-  message['Subject'] = subject
-  return {'raw': base64.urlsafe_b64encode(message.as_string().encode('UTF-8'))\
-                 .decode('ascii')}
+  message['to'] = ",".join(to)
+  message['from'] = sender
+  message['subject'] = subject
+  return {'raw': base64.urlsafe_b64encode(message.as_bytes()).decode('utf-8')}
 
 
 def CreateMessageWithAttachment(sender, to, subject, message_text, file_dir,

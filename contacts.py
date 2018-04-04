@@ -23,6 +23,7 @@ class ContactBook:
         print("saved to", self.filename)
 
     def addContact(self, contactname, contact, contacttype = "phone"):
+        contactname = contactname.lower()
         assert contacttype == "phone" or contacttype == "email"
 
         if contactname not in self.contacts:
@@ -32,11 +33,13 @@ class ContactBook:
         self.saveContact()
 
     def deleteContact(self, contactname):
+        contactname = contactname.lower()
         if contactname in self.contacts:
             self.contacts.pop(contactname, None)
             self.saveContact()
 
     def getContact(self, contactname, contacttype = "phone"):
+        contactname = contactname.lower()
         assert contacttype == "phone" or contacttype == "email"
 
         try: 
@@ -45,8 +48,10 @@ class ContactBook:
                 return retVal
             else:
                 print("No contact exists for", contactname)
+                return None
         except KeyError:
-            print("Error, couldn't find person")
+            print("Error: couldn't find person")
+            return None
 
 
     def listContacts(self):
@@ -58,13 +63,16 @@ class ContactBook:
 
 
 c = ContactBook() 
-c.listContacts()
 
-#c.addContact("Dan", "1234567890")
-#c.addContact("Dan", "yayayayay@gmail.com", "email")
+c.addContact("Dan", "1234567890")
+c.addContact("Dan", "dwuu@gmail.com", "email")
+c.addContact("Grant", "7818988832")
+c.addContact("Grant", "guangyu@umich.edu", "email")
+c.addContact("voice", "eecs498.vois@gmail.com", "email")
+c.addContact("test", "eecs498.vois@gmail.com", "email")
 #c.addContact("Aki", "foo@bar.com", "email")
-#c.getContact("Aki", "email")
-#print(c.getContact("Dan"))
-#c.listContacts()
+c.getContact("Grant", "email")
+# print(c.getContact("Grab"))
+# c.listContacts()
 
 

@@ -16,13 +16,15 @@ import vois_websearch
 import boto3
 import datetime
 import ast
+import contacts
 
 #Necessary for application switching
 from pynput.keyboard import Key, Controller
 import time
 
 
-
+# import contacts
+contact_book = contacts.ContactBook() 
 
 # Load kv file
 Builder.load_file('kv/home.kv')
@@ -127,7 +129,10 @@ def execute(data):
         sm.current = current_screen
 
     elif action_type == 'emailcompose':
-        to = context['To']
+        to = contact_book.getContact(context['To'], "email")
+        if not to:
+            print('Error: Contact name is invalid')
+            return
         subject = context['Subject']
         message = context['Message']
         sm.current = 'loading'

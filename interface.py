@@ -108,7 +108,10 @@ def execute(data):
             print('Error: Invalid destination screen')
 
     elif action_type == 'phonecall':
-        destination_number = context['DestinationNumber']
+        destination_number = contact_book.getContact(context['Contact'])
+        if not destination_number:
+            print('Error: Contact name is invalid')
+            return
         current_screen = sm.current
 
         sm.current = 'call'
@@ -118,7 +121,10 @@ def execute(data):
         sm.current = current_screen
 
     elif action_type == 'phonetext':
-        destination_number = context['DestinationNumber']
+        destination_number = contact_book.getContact(context['Contact'])
+        if not destination_number:
+            print('Error: Contact name is invalid')
+            return
         message = context['Message']
         current_screen = sm.current
 
@@ -327,19 +333,19 @@ def error_check(image):
         }
 
     elif action_type == 'phonecall':
-        destination_number = str(context['DestinationNumber'])
+        contact = context['Contact']
 
         data['ActionType'] = 'PhoneCall'
         data['Context'] = {
-            'DestinationNumber': destination_number
+            'Contact': destination_number
         }
 
     elif action_type == 'phonetext':
-        destination_number = str(context['DestinationNumber'])
+        contact = context['Contact']
         message = context['Message']
         data['ActionType'] = 'PhoneText'
         data['Context'] = {
-            'DestinationNumber': destination_number,
+            'Contact': contact,
             'Message': message
         }
 

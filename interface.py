@@ -158,7 +158,10 @@ def execute(data):
         screen.compose_email(to, subject, message)
     
     elif action_type == 'emailforward':
-        to = context['To']
+        to = contact_book.getContact(context['To'], "email")
+        if not to:
+            print('Error: Contact name is invalid')
+            return
         subject = vois_email.forward_msg['subject']
         message = context['Message'] + vois_email.forward_msg['body']
         sm.current = 'loading'

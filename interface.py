@@ -340,7 +340,7 @@ def error_check(image):
 
         data['ActionType'] = 'PhoneCall'
         data['Context'] = {
-            'Contact': destination_number
+            'Contact': contact
         }
 
     elif action_type == 'phonetext':

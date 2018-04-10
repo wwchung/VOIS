@@ -121,10 +121,9 @@ def searchFolder(folder_name=''):
 	full_paths = [] #Need this for sorting capabilities
 
 	root = createPath(folder_name)
-
-	#Only search through this specific folder
+	#Only search through this specific folder 
 	for file in os.listdir(root):
-		if file.endswith('.docx'):
+		if '.docx' in file and not '~$' in file:
 			documents_map[file] = root + file
 			full_paths.append(root+file)
 

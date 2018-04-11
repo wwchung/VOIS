@@ -4,7 +4,7 @@ import os
 
 class ContactBook:
 
-    def __init__(self, filename = "~/contacts.p"):
+    def __init__(self, filename = "contacts.p"):
         self.filename = filename
         self.contacts = {}
 

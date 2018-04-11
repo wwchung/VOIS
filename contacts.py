@@ -52,6 +52,10 @@ class ContactBook:
         except KeyError:
             print("Error: couldn't find person")
             return None
+            
+    def clearContacts(self):
+        self.contacts = {}
+        self.saveContact()
 
 
     def listContacts(self):
@@ -63,7 +67,16 @@ class ContactBook:
 
 
 c = ContactBook("contacts.p") 
+
+
 c.addContact('DLJLKJLK', "DLKJLKJLKJDLKJLK")
+c.listContacts()
+c.clearContacts()
+c.addContact("test1", "123")
+c.addContact("test2", "123")
+c.addContact("test3", "123")
+c.addContact("test4", "123")
+
 '''
 c.addContact("Dan", "1234567890")
 c.addContact("Dan", "dwuu@gmail.com", "email")

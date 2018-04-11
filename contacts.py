@@ -15,6 +15,7 @@ class ContactBook:
             self.loadContact()
 
     def loadContact(self):
+        print(self.filename)
         self.contacts = pickle.load(open(self.filename, "rb"))
         print("loaded from", self.filename)
 

@@ -62,17 +62,18 @@ class ContactBook:
             print()
 
 
-c = ContactBook() 
-
+c = ContactBook("contacts.p") 
+c.addContact('DLJLKJLK', "DLKJLKJLKJDLKJLK")
+'''
 c.addContact("Dan", "1234567890")
 c.addContact("Dan", "dwuu@gmail.com", "email")
 c.addContact("Grant", "7818988832")
 c.addContact("Grant", "guangyu@umich.edu", "email")
 c.addContact("voice", "eecs498.vois@gmail.com", "email")
-c.addContact("test", "eecs498.vois@gmail.com", "email")
+c.addContact("test", "eecs498.vois@gmail.com", "email")'''
 #c.addContact("Aki", "foo@bar.com", "email")
 c.getContact("Grant", "email")
 # print(c.getContact("Grab"))
-# c.listContacts()
+c.listContacts()
 
 

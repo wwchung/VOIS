@@ -1,6 +1,6 @@
 #!/usr/bin/python
-import pickle
 import os
+import pickle
 
 class ContactBook:
 
@@ -15,13 +15,13 @@ class ContactBook:
             self.loadContact()
 
     def loadContact(self):
-        print(self.filename)
+        # print(self.filename)
         self.contacts = pickle.load(open(self.filename, "rb"))
-        print("loaded from", self.filename)
+        # print("Loaded from ", self.filename)
 
     def saveContact(self):
         pickle.dump(self.contacts, open(self.filename, "wb" ))
-        print("saved to", self.filename)
+        # print("Saved to ", self.filename)
 
     def addContact(self, contactname, contact, contacttype = "phone"):
         contactname = contactname.lower()
@@ -48,23 +48,22 @@ class ContactBook:
             if retVal != None:
                 return retVal
             else:
-                print("No contact exists for", contactname)
+                print("No contact exists for ", contactname)
                 return None
         except KeyError:
-            print("Error: couldn't find person")
+            print("Error: Couldn't find person")
             return None
             
     def clearContacts(self):
         self.contacts = {}
         self.saveContact()
 
-
     def listContacts(self):
         for k,v in self.contacts.items():
+            print()
             print(k)
             print("\tPhone:", v['phone'])
             print("\tEmail:", v['email'])
-            print()
 
 
 c = ContactBook("contacts.p") 
@@ -80,8 +79,4 @@ c.addContact("Aki", "guangyu@umich.edu", "email")
 c.addContact("voice", "eecs498.vois@gmail.com", "email")
 c.addContact("test", "eecs498.vois@gmail.com", "email")
 
-c.listContacts()
-
-
-
-  
+# c.listContacts()

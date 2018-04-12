@@ -7,24 +7,18 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager, Screen
+from pynput.keyboard import Key, Controller
 from threading import Thread
+import ast
+import contacts
+import boto3
+import datetime
 import time
 import vois_phone
 import vois_email
 import vois_documents
 import vois_websearch
-import boto3
-import datetime
-import ast
-import contacts
 
-#Necessary for application switching
-from pynput.keyboard import Key, Controller
-import time
-
-
-# import contacts
-contact_book = contacts.ContactBook() 
 
 # Load kv file
 Builder.load_file('kv/home.kv')
@@ -32,8 +26,6 @@ Builder.load_file('kv/phone.kv')
 Builder.load_file('kv/email.kv')
 Builder.load_file('kv/document.kv')
 Builder.load_file('kv/web.kv')
-
-switch = False #A global variable for the application switching feature
 
 
 # Define home screen
@@ -65,10 +57,6 @@ sm.add_widget(vois_email.MessageScreen(name='message'))
 
 # Add all document screens
 sm.add_widget(vois_documents.documentHomeScreen(name='documentHome'))
-
-
-#sm.add_widget(vois_documents.newDocsScreen(name='newDocs'))
-#sm.add_widget(vois_documents.prevDocsScreen(name='prevDocs'))
 sm.add_widget(vois_documents.documentResultsScreen(name='documentResults'))
 
 # Add all web screens
@@ -76,23 +64,30 @@ sm.add_widget(vois_websearch.WebScreen(name='web'))
 sm.add_widget(vois_websearch.ResultScreen(name='result'))
 
 
+# A global variable for switching between apps
+switch = False
+
+# Import contacts
+contact_book = contacts.ContactBook() 
+
 
 #Execute Commands
 def execute(data):
     action_type = data['ActionType'].lower()
     context = data['Context']
 
-    print('')
+    print()
     print('Action:',action_type)
     print('Context', context)
 
+    # Navigation
     if action_type == 'navigate':
         destination_screen = context['DestinationScreen'].lower()
 
         if destination_screen == 'home':
             sm.current = 'home'
 
-        elif destination_screen == 'phone':
+        elif destination_screen == 'phone' or destination_screen == 'poem':
             sm.current = 'phone'
 
         elif destination_screen == 'email':
@@ -107,10 +102,11 @@ def execute(data):
         else:
             print('Error: Invalid destination screen')
 
+    # Phone
     elif action_type == 'phonecall':
         destination_number = contact_book.getContact(context['Contact'])
         if not destination_number:
-            print('Error: Contact name is invalid')
+            print('Error: Invalid contact')
             return
         current_screen = sm.current
 
@@ -123,7 +119,7 @@ def execute(data):
     elif action_type == 'phonetext':
         destination_number = contact_book.getContact(context['Contact'])
         if not destination_number:
-            print('Error: Contact name is invalid')
+            print('Error: Invalid contact')
             return
         message = context['Message']
         current_screen = sm.current
@@ -134,10 +130,11 @@ def execute(data):
         time.sleep(3)
         sm.current = current_screen
 
+    # Email
     elif action_type == 'emailcompose':
         to = contact_book.getContact(context['To'], "email")
         if not to:
-            print('Error: Contact name is invalid')
+            print('Error: Invalid contact')
             return
         subject = context['Subject']
         message = context['Message']
@@ -160,7 +157,7 @@ def execute(data):
     elif action_type == 'emailforward':
         to = contact_book.getContact(context['To'], "email")
         if not to:
-            print('Error: Contact name is invalid')
+            print('Error: Invalid contact')
             return
         subject = vois_email.forward_msg['subject']
         message = context['Message'] + vois_email.forward_msg['body']
@@ -216,55 +213,51 @@ def execute(data):
             screen = vois_email.MessageScreen()
             screen.open_message(msg, False)
 
-
+    # Document
     elif action_type == 'documentcreate':
 
-        #Extract file and folder name
+        # Extract file and folder name
         file_name = context['FileName'].lower()
         folder_name = context['FolderName'].lower()
 
-        #Create new document
-        vois_documents.newDoc(folder_name,file_name)
-
+        # Create new document
+        vois_documents.newDoc(folder_name, file_name)
 
     elif action_type == 'documentsearch':
 
-        #Extract folder name
+        # Extract folder name
         folder_name = context['FolderName'].lower()
 
-        #Search Folder and load document results
+        # Search Folder and load document results
         sm.get_screen('documentResults').byFolder(folder_name)
         sm.transition.direction = 'left'
         sm.current = 'documentResults'
 
-
     elif action_type == 'documentrecent':
         
-        #Call top ten function
+        # Call top ten function
         sm.get_screen('documentResults').topTen()
         sm.transition.direction = 'left'
         sm.current = 'documentResults'
 
-
     elif action_type == 'documentopen':
         
-        #Construct document id 
+        # Construct document id 
         doc_num = int(context['DocumentNumber'])
         doc_id = 'doc_' + str(doc_num - 1)
 
-        #Get the file
+        # Get the file
         file = sm.get_screen('documentResults').ids[doc_id].text
-        #Remove the number from the file name
+        # Remove the number from the file name
         file = file.replace(str(doc_num) + '. ','') 
-        #Open the document
+        # Open the document
         sm.get_screen('documentResults').openDoc(file)
 
-        #Return to the home screen
+        # Return to the home screen
         sm.current = 'home'
         sm.transition.direction = 'left'
 
-        
-
+    # Web
     elif action_type == 'websearch':
         query = context['Query']
 
@@ -289,31 +282,27 @@ def execute(data):
 
         screen.open_url(result_number)
 
-
-
+    # Switch between apps
     elif action_type == 'startswitch':
-        #Start switching function
-        print('About to start switching')
+        # Start switching function
+        print('Start switching')
 
         switcher = Thread(target=switchApplications)
         switcher.start()
 
-
     elif action_type == 'stopswitch':
-        #Set global switch mode variable to false
-        print('About to stop switching')
+        # Set global switch mode variable to false
+        print('Stop switching')
 
         global switch
         switch = False
 
-
-
+    # Exit
     elif action_type == 'exit':
         App.get_running_app().stop()
 
 
-
-#Check commands for errors
+# Check command for errors
 def error_check(image):
     action_type = image['ActionType']['S'].lower()
     context = ast.literal_eval(image['Context']['S'])
@@ -322,6 +311,7 @@ def error_check(image):
         'Context': {}
     }
 
+    # Navigate
     if action_type == 'navigate':
         destionation_screen = context['DestinationScreen']
         
@@ -330,6 +320,7 @@ def error_check(image):
             'DestinationScreen': destionation_screen
         }
 
+    # Phone
     elif action_type == 'phonecall':
         contact = context['Contact']
 
@@ -347,6 +338,7 @@ def error_check(image):
             'Message': message
         }
 
+    # Email
     elif action_type == 'emailcompose':
         to = context['To']
         subject = context['Subject']
@@ -409,6 +401,7 @@ def error_check(image):
             'MessageNumber': message_number
         }
 
+    # Document
     elif action_type == 'documentcreate':
         file_name = context['FileName']
         folder_name = context['FolderName']
@@ -442,6 +435,7 @@ def error_check(image):
 		    'DocumentNumber': document_number
         }
 
+    # Web
     elif action_type == 'websearch':
         query = context['Query']
 
@@ -462,20 +456,19 @@ def error_check(image):
             'ResultNumber': result_number
         }
 
-    elif action_type == 'exit':
-        data['ActionType'] = 'Exit'
-
-
-    #Start and stop application switching
+    # Switch between apps
     elif action_type == 'startswitch':
-
         data['ActionType'] = 'StartSwitch'
         data['Context'] = {}
+
     elif action_type == 'stopswitch':
         data['ActionType'] = 'StopSwitch'
         data['Context'] = {}
-    
 
+    # Exit
+    elif action_type == 'exit':
+        data['ActionType'] = 'Exit'
+    
     else:
         print('Error: Invalid action type')
         return
@@ -483,34 +476,30 @@ def error_check(image):
     execute(data)
 
 
-#Listens to dynamoDB for new commands
+# Listen to dynamoDB for new commands
 def listenToDB():
-
     arn = 'arn:aws:dynamodb:us-east-1:166631308062:table/Commands/stream/2018-03-17T00:48:45.175'
     
-
-    #connect to stream by ARN, and then get shards from description
+    # Connect to stream by ARN, and then get shards from description
     client = boto3.client('dynamodbstreams')
     description = client.describe_stream(StreamArn=arn)
     shardsList = description['StreamDescription']['Shards']
 
-    print("Connected to DynamoDB stream", arn)
-    print("Number of shards in stream:", len(shardsList))
+    # print("Connected to DynamoDB stream: ", arn)
+    # print("Number of shards in stream: ", len(shardsList))
 
     for shard in shardsList:
-
         shardID = shard['ShardId']
 
-        #skip shard if it's closed (it will not be receiving any new records)
+        # Skip shard if it's closed (it will not be receiving any new records)
         if 'EndingSequenceNumber' in shard['SequenceNumberRange']:
-            print("Shard ID ending in ", shardID[-8:], "is closed")
+            # print("Shard ID ending in ", shardID[-8:], "is closed")
             continue
 
-        print("Shard open, processing shard ID:", shardID[-8:])
+        # print("Shard open, processing shard ID:", shardID[-8:])
 
-        #get an iterator result for the open shard
-        #this iterator looks at records that appear only after this function has been called
-
+        # Get an iterator result for the open shard
+        # This iterator looks at records that appear only after this function has been called
         getShardIteratorResult = client.get_shard_iterator(
             StreamArn=arn,
             ShardId=shardID,
@@ -519,71 +508,65 @@ def listenToDB():
 
         shardIterator = getShardIteratorResult['ShardIterator']
 
-        print("\nListening for new records...")
+        print("\nListening for commands...")
 
-        #begin iterating through shards from the parent 
+        # Begin iterating through shards from the parent 
         while shardIterator is not None:
-
-
-            #get any new records that may appear
+            # Get any new records that may appear
             getRecordsResult = client.get_records(ShardIterator=shardIterator)
             recordsList = getRecordsResult['Records']
 
-
-            #usually recordsList is a single record, but sometimes multiple records may have been modified
+            # Usually recordsList is a single record, but sometimes multiple records may have been modified
             for record in recordsList:
-
-                
-
-                #Checks to see if the new event record is an insertion
+                # Check to see if the new event record is an insertion
                 if record['eventName'] != "INSERT":
                     print("Record is not a new insertion, skipping")
-                    print("\nListening for new records...")
+                    print("\nListening for commands...")
                     continue
 
-                #prints the attributes of the new record
+                # Print the attributes of the new record
                 image = record['dynamodb']['NewImage']
                 # for attr in image:
                 #     print("\t",attr, image[attr])
 
                 error_check(image)
 
-                print("\nListening for new records...")
+                print("\nListening for commands...")
 
-            #move on to the next shard iterator
+            # Move on to the next shard iterator
             if 'NextShardIterator' in getRecordsResult:
                 shardIterator = getRecordsResult['NextShardIterator']
 
-                #print("Moving to shard iterator ending in", shardIterator[-8:])
+                # print("Moving to shard iterator ending in", shardIterator[-8:])
             else: 
-                #reached the end of a shard sequence, which means it has closed.
+                # Reached the end of a shard sequence, which means it has closed.
                 shardIterator = None
                 break
 
         print("Reached end of shardIterators for shardID ", shardID, ", stopped listening.")
 
 
-#A function to switch applications
+# A function to switch applications
 def switchApplications():
-    #Takes control of the keyboard and changes the application that is focused
+    # Take control of the keyboard and changes the application that is focused
     keyboard = Controller()
 
     global switch
-    switch = True #Set switch mode to true
+    switch = True # Set switch mode to true
 
-    #Will rotate through open applications. Switches every five seconds to leave time for voice commands
+    # Will rotate through open applications. Switches every five seconds to leave time for voice commands
     with keyboard.pressed(Key.cmd):
 
         while switch:
             keyboard.press(Key.tab)
             keyboard.release(Key.tab)
 
-            #Insert check to see when to stop
+            # Insert check to see when to stop
             if not switch:
                 break
 
-            time.sleep(5) #Give time for the user to tell Alexa to stop switching
-
+            # Give time for the user to tell Alexa to stop switching
+            time.sleep(5) 
 
 
 class VOIS(App):

@@ -1,9 +1,16 @@
 <PhoneScreen>:
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         orientation: 'vertical'
         Label:
             text: 'Phone'
             font_size: '56sp'
+            color: (1, 0.796875, 0.0234375, 1)
         Button:
             text: 'Use VOIS to call {number}'
             font_size: '34sp'
@@ -14,12 +21,24 @@
 <CallScreen>:
     on_pre_enter: root.reset_label()
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: box
         orientation: 'vertical'
 
 <TextScreen>:
     on_pre_enter: root.reset_label()
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: box
         orientation: 'vertical'
         

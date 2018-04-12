@@ -1,9 +1,16 @@
 <documentHomeScreen>:
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         orientation: 'vertical'
         Label:
             text: 'Document'
             font_size: '56sp'
+            color: (1, 0.796875, 0.0234375, 1)
         Button:
             font_size: '34sp'
             text: 'Create document {name} in folder {name}'
@@ -16,12 +23,19 @@
 
 <documentResultsScreen>
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
 		orientation: 'vertical'
         BoxLayout:
             Label:
                 id: title
                 text: 'Folder - Undefined'
                 font_size: '34sp'
+                color: (1, 0.796875, 0.0234375, 1)
                 halign: 'center'
             Label:
                 text: '\"Open document number {number}\"'

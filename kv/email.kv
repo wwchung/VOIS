@@ -1,9 +1,16 @@
 <EmailScreen>:
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         orientation: 'vertical'
         Label:
             text: 'Email'
             font_size: '56sp'
+            color: (1, 0.796875, 0.0234375, 1)
         Button:
             text: 'Open email inbox'
             font_size: '34sp'
@@ -18,12 +25,19 @@
 <InboxScreen>:
     on_pre_enter: root.reset_buttons()
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: box
         orientation: 'vertical'
         BoxLayout:
             Label:
                 text: 'Inbox'
                 font_size: '45sp'
+                color: (1, 0.796875, 0.0234375, 1)
             Label:
                 text: '\"Open email number {number}\"'
                 font_size: '20sp'
@@ -33,12 +47,19 @@
 <SentScreen>:
     on_pre_enter: root.reset_buttons()
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: box
         orientation: 'vertical'
         BoxLayout:
             Label:
                 text: 'Sent Mail'
                 font_size: '45sp'
+                color: (1, 0.796875, 0.0234375, 1)
             Label:
                 text: '\"Open email number {number}\"'
                 font_size: '20sp'
@@ -47,6 +68,12 @@
 <MessageScreen>:
     on_pre_enter: root.reset_widgets()
     GridLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: body_grid
         cols: 1
         GridLayout:
@@ -59,6 +86,12 @@
 <ComposeScreen>:
     on_pre_enter: root.reset_widgets()
     GridLayout:
+        canvas.before:
+            Color:
+                rgba: 0, 0.15625, 0.30078125, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
         id: body_grid
         cols: 1
         GridLayout:

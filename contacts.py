@@ -69,26 +69,19 @@ class ContactBook:
 
 c = ContactBook("contacts.p") 
 
-
-c.addContact('DLJLKJLK', "DLKJLKJLKJDLKJLK")
-c.listContacts()
 c.clearContacts()
-c.addContact("test1", "123")
-c.addContact("test2", "123")
-c.addContact("test3", "123")
-c.addContact("test4", "123")
 
-'''
-c.addContact("Dan", "1234567890")
-c.addContact("Dan", "dwuu@gmail.com", "email")
+c.addContact("Dan", "7347806855")
+c.addContact("Dan", "dwuu@umich.edu", "email")
 c.addContact("Grant", "7818988832")
 c.addContact("Grant", "guangyu@umich.edu", "email")
+c.addContact("Aki", "7345068603")
+c.addContact("Aki", "guangyu@umich.edu", "email")
 c.addContact("voice", "eecs498.vois@gmail.com", "email")
-c.addContact("test", "eecs498.vois@gmail.com", "email")'''
-#c.addContact("Aki", "foo@bar.com", "email")
-c.getContact("Grant", "email")
-# print(c.getContact("Grab"))
+c.addContact("test", "eecs498.vois@gmail.com", "email")
+
 c.listContacts()
+
 
 
   

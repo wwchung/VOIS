@@ -244,7 +244,7 @@ class documentResultsScreen(Screen):
     #Gets top ten most recently modified documents and displays them to the screen
     def topTen(self):
 
-        self.ids.title.text = 'VOIS - Documents - Previous Documents - Top 10' #Set title
+        self.ids.title.text = 'Recent documents' #Set title
 
         paths,self.data = topTenPrevDocs()
 

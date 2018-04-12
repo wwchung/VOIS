@@ -263,7 +263,6 @@ def execute(data):
         sm.current = 'home'
         sm.transition.direction = 'left'
 
-
         
 
     elif action_type == 'websearch':
@@ -289,10 +288,6 @@ def execute(data):
             return
 
         screen.open_url(result_number)
-
-        sm.current = 'home' #Switch back to home after the user opens a link
-
-
 
 
 

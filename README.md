@@ -6,6 +6,9 @@
 
 Following these instructions to start the `VOIS` app:
 
+#### Pre-Requirements:
+- Homebrew
+
 #### Package Installations:
 ~~~
 $ ./install_packages.sh

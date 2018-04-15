@@ -114,8 +114,6 @@ def GetInboxMessages(service, num_msg=6):
         message_info['snippet'] = msg_details['snippet'] # fetching message snippet
 
         try:
-            if msg_id == '1628e45ba834d0dd':
-                print(payload)
             # Fetching message body
             if 'parts' in payload:
                 mssg_parts = payload['parts'] # fetching the message parts

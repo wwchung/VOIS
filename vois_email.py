@@ -171,7 +171,7 @@ class MessageScreen(Screen):
             self.body_widgets[0].text = msg['body']
         except Exception:
             self.body_widgets[0].text = msg['snippet']
-        print(msg)
+
         if inbox:
             # mark message as READ
             if 'UNREAD' in msg['labels']:

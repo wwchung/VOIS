@@ -5,14 +5,14 @@ set -x
 PREV_CREDENTIAL=$HOME"/.credentials/client_secret.json"
 rm -rf $PREV_CREDENTIAL
 
-sudo apt-get update
-sudo apt-get install python3.6
-sudo apt-get install python-pip3 python-dev build-essential
-pip3 install --upgrade pip
-pip3 install --upgrade virtualenv
+#sudo apt-get install python-pip3 python-dev build-essential
 
 brew install python@2
+brew install python@3
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer gstreamer
+
+pip3 install --upgrade pip
+pip3 install --upgrade virtualenv
 pip3 install Cython==0.26.1
 pip3 install kivy
 pip3 install https://github.com/kivy/kivy/archive/master.zip

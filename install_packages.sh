@@ -11,6 +11,7 @@ sudo apt-get install python-pip3 python-dev build-essential
 pip3 install --upgrade pip
 pip3 install --upgrade virtualenv
 
+brew install python@2
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer gstreamer
 pip3 install Cython==0.26.1
 pip3 install kivy

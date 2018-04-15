@@ -114,14 +114,23 @@ def GetInboxMessages(service, num_msg=6):
         message_info['snippet'] = msg_details['snippet'] # fetching message snippet
 
         try:
-            
+            if msg_id == '1628e45ba834d0dd':
+                print(payload)
             # Fetching message body
             if 'parts' in payload:
                 mssg_parts = payload['parts'] # fetching the message parts
                 part_one  = mssg_parts[0] # fetching first element of the part
                 part_body = part_one['body'] # fetching body of the message
+                if not 'data' in part_body and 'parts' in payload['parts'][0]:
+                    mssg_parts = payload['parts'][0]['parts'] # fetching the message parts
+                    part_one  = mssg_parts[0] # fetching first element of the part
+                    part_body = part_one['body'] # fetching body of the message
+                else:
+                    part_body = {'data': msg_details['snippet']}
             elif 'body' in payload:
                 part_body = payload['body']
+            else:
+                part_body = {'data': msg_details['snippet']}
             part_data = part_body['data'] # fetching data from the body
             clean_one = part_data.replace("-","+") # decoding from Base64 to UTF-8
             clean_one = clean_one.replace("_","/") # decoding from Base64 to UTF-8
@@ -194,8 +203,11 @@ def GetSentMessages(service, num_msg=6):
                 message_info['subject'] = value
         try:
             if msg_details.get('payload').get('parts'):
-                body_msg = msg_details.get('payload').get('parts')[-1]\
-                           .get('body').get('data')
+                if msg_details.get('payload').get('parts')[-1].get('body').get('size') == 0:
+                    body_msg = msg_details.get('payload').get('parts')[-1].get('parts')[-1].\
+                    get('body').get('data')
+                else:
+                    body_msg = msg_details.get('payload').get('parts')[-1].get('body').get('data')
             else:
                 body_msg = msg_details.get('payload').get('body').get('data')
             body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))

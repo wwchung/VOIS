@@ -209,7 +209,7 @@ class MessageScreen(Screen):
         self.header_widgets.append(subject_label)
         self.ids.header_grid.add_widget(subject_label)
         
-        body_text_input = TextInput(text='', font_size='20sp')
+        body_text_input = TextInput(text='', font_size='20sp', multiline=True, focus=True)
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
@@ -235,6 +235,7 @@ class ComposeScreen(Screen):
         self.header_widgets[1].text = to
         self.header_widgets[3].text = subject
         self.body_widgets[0].text = ''
+        # print(body)
         self.body_widgets[0].text = body
 
     def send_email(self):
@@ -252,23 +253,25 @@ class ComposeScreen(Screen):
                 pop = Popup(title='Error', content=ti,
                             size_hint=(None, None), size=(400, 400))
                 pop.open()
+                time.sleep(3)
+                pop.dismiss()
 
     def reset_widgets(self):
         self.remove_widgets()
 
-        to_label = Label(text='To:', font_size='20sp', size_hint=(0.2, None), height=60)
+        to_label = Label(text='To:', font_size='20sp', size_hint=(0.2, None), height=120)
         self.header_widgets.append(to_label)
         self.ids.header_grid.add_widget(to_label)
 
-        to_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=60)
+        to_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
         self.header_widgets.append(to_text_input)
         self.ids.header_grid.add_widget(to_text_input)
 
-        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=60)
+        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
         self.header_widgets.append(subject_label)
         self.ids.header_grid.add_widget(subject_label)
         
-        subject_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=60)
+        subject_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
         self.header_widgets.append(subject_text_input)
         self.ids.header_grid.add_widget(subject_text_input)
         
@@ -276,7 +279,7 @@ class ComposeScreen(Screen):
         self.body_widgets.append(body_text_input)
         self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='\"send email\"', font_size='20sp', size_hint=(1, None), height=60)
+        btn = Button(text='\"Send email\"', font_size='20sp', size_hint=(1, None), height=120)
         self.body_widgets.append(btn)
         self.ids.body_grid.add_widget(btn)
 

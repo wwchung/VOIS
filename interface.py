@@ -7,6 +7,8 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 from pynput.keyboard import Key, Controller
 from threading import Thread
 import ast
@@ -70,6 +72,12 @@ switch = False
 # Import contacts
 contact_book = contacts.ContactBook() 
 
+def display_invalid_action(message):
+    pop = Popup(title='Invalid action', content=Label(text=message), 
+                size_hint=(None, None), size=(300, 200))
+    pop.open()
+    time.sleep(2)
+    pop.dismiss()
 
 #Execute Commands
 def execute(data):
@@ -100,13 +108,13 @@ def execute(data):
             sm.current = 'web'
 
         else:
-            print('Error: Invalid destination screen')
+            display_invalid_action('Error: Invalid destination screen')
 
     # Phone
     elif action_type == 'phonecall':
         destination_number = contact_book.getContact(context['Contact'])
         if not destination_number:
-            print('Error: Invalid contact')
+            display_invalid_action('Error: Invalid contact name')
             return
         current_screen = sm.current
 
@@ -119,7 +127,7 @@ def execute(data):
     elif action_type == 'phonetext':
         destination_number = contact_book.getContact(context['Contact'])
         if not destination_number:
-            print('Error: Invalid contact')
+            display_invalid_action('Error: Invalid contact name')
             return
         message = context['Message']
         current_screen = sm.current
@@ -134,7 +142,7 @@ def execute(data):
     elif action_type == 'emailcompose':
         to = contact_book.getContact(context['To'], "email")
         if not to:
-            print('Error: Invalid contact')
+            display_invalid_action('Error: Invalid contact name')
             return
         subject = context['Subject']
         message = context['Message']
@@ -147,7 +155,7 @@ def execute(data):
     elif action_type == 'emailreply':
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
-        message = context['Message'] + vois_email.reply_msg['body']
+        message = u"" + context['Message'] + vois_email.reply_msg['body']
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'
@@ -157,10 +165,10 @@ def execute(data):
     elif action_type == 'emailforward':
         to = contact_book.getContact(context['To'], "email")
         if not to:
-            print('Error: Invalid contact')
+            display_invalid_action('Error: Invalid contact name')
             return
         subject = vois_email.forward_msg['subject']
-        message = context['Message'] + vois_email.forward_msg['body']
+        message = u"" + context['Message'] + vois_email.forward_msg['body']
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'
@@ -193,7 +201,7 @@ def execute(data):
 
         if sm.current == 'inbox':
             if int(message_number) > min(7, len(vois_email.inbox_messages)):
-                print('Error: Invalid email number')
+                display_invalid_action('Error: Invalid email number')
                 return
             msg = vois_email.inbox_messages[message_number - 1]
             sm.current = 'loading'
@@ -204,7 +212,7 @@ def execute(data):
 
         elif sm.current == 'sent':
             if int(message_number) > min(7, len(vois_email.sent_messages)):
-                print('Error: Invalid email number')
+                display_invalid_action('Error: Invalid email number')
                 return
             msg = vois_email.sent_messages[message_number - 1]
             sm.current = 'loading'
@@ -262,7 +270,7 @@ def execute(data):
         query = context['Query']
 
         if query == '':
-            print('Error: Empty query')
+            display_invalid_action('Error: Empty query')
             return
         
         sm.current = 'loading'
@@ -277,7 +285,7 @@ def execute(data):
         screen = vois_websearch.ResultScreen()
 
         if int(result_number) > min(6, len(screen.results)):
-            print('Error: Invalid result number')
+            display_invalid_action('Error: Invalid result number')
             return
 
         screen.open_url(result_number)
@@ -356,7 +364,7 @@ def error_check(image):
 
     elif action_type == 'emailsend':
         if sm.current != 'compose':
-            print('Error: Invalid action type')
+            display_invalid_action('Error: Invalid action type')
             return
         data['ActionType'] = 'EmailSend'
 
@@ -365,7 +373,7 @@ def error_check(image):
 
     elif action_type == 'emailreply':
         if sm.current != 'message':
-            print('Error: Invalid action type')
+            display_invalid_action('Error: Invalid action type')
             return
 
         message = context['Message']
@@ -377,7 +385,7 @@ def error_check(image):
 
     elif action_type == 'emailforward':
         if sm.current != 'message':
-            print('Error: Invalid action type')
+            display_invalid_action('Error: Invalid action type')
             return
 
         to = context['To']
@@ -391,7 +399,7 @@ def error_check(image):
         
     elif action_type == 'emailopen':
         if sm.current != 'inbox' and sm.current != 'sent':
-            print('Error: Invalid action type')
+            display_invalid_action('Error: Invalid action type')
             return
 
         message_number = context['EmailNumber']
@@ -427,7 +435,7 @@ def error_check(image):
         document_number = context['DocumentNumber']
         
         if int(document_number) > 10:
-            print('Error: Invalid entry')
+            display_invalid_action('Error: Invalid document entry!')
             return
 
         data['ActionType'] = 'DocumentOpen'
@@ -446,7 +454,7 @@ def error_check(image):
 
     elif action_type == 'webopen':
         if sm.current != 'result':
-            print('Error: Invalid action type')
+            display_invalid_action('Error: Invalid action type')
             return
 
         result_number = context['ResultNumber']
@@ -470,10 +478,17 @@ def error_check(image):
         data['ActionType'] = 'Exit'
     
     else:
-        print('Error: Invalid action type')
-        return
-
+        display_invalid_action('Error: Invalid action type')
+    
     execute(data)
+    # try:
+    #     execute(data)
+    # except:
+    #     pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
+    #                 size_hint=(None, None), size=(300, 200))
+    #     pop.open()
+    #     time.sleep(2)
+    #     pop.dismiss()
 
 
 # Listen to dynamoDB for new commands

@@ -123,13 +123,15 @@ def GetInboxMessages(service, num_msg=6):
                     mssg_parts = payload['parts'][0]['parts'] # fetching the message parts
                     part_one  = mssg_parts[0] # fetching first element of the part
                     part_body = part_one['body'] # fetching body of the message
-                else:
-                    part_body = {'data': msg_details['snippet']}
             elif 'body' in payload:
                 part_body = payload['body']
             else:
                 part_body = {'data': msg_details['snippet']}
-            part_data = part_body['data'] # fetching data from the body
+
+            if not 'data' in part_body:
+                part_data = message_info['snippet']
+            else:
+                part_data = part_body['data'] # fetching data from the body
             clean_one = part_data.replace("-","+") # decoding from Base64 to UTF-8
             clean_one = clean_one.replace("_","/") # decoding from Base64 to UTF-8
             clean_two = base64.b64decode (bytes(clean_one, 'UTF-8')) # decoding from Base64 to UTF-8
@@ -141,45 +143,10 @@ def GetInboxMessages(service, num_msg=6):
             message_info['body'] = cleanMe(str(mssg_body))[1:-1]
                 
         except :
-            print("err:  ", message_info['msg_id'])
+            print("Error, message_id:  ", message_info['msg_id'])
             pass
         messages_info.append(message_info)
     return messages_info
-
-
-
-
-    #     print(msg_id)
-    #     msg_details = GetMessage(service, msg_id)
-    #     message_info = {'msg_id': msg_id,
-    #                     'snippet': msg_details.get('snippet'),
-    #                     'timestamp': int(msg_details.get('internalDate'))/1000,
-    #                     'labels': msg_details.get('labelIds')}
-
-    #     for entry in msg_details.get('payload').get('headers'):
-    #         name = entry.get('name').lower()
-    #         value = entry.get('value')
-    #         if name == 'from':
-    #             message_info['from'] = value
-    #         elif name == 'reply-to':
-    #             message_info['reply'] = value
-    #         elif name == 'subject':
-    #             message_info['subject'] = value
-    #     try:
-    #         if msg_details.get('payload').get('parts'):
-    #             body_msg = msg_details.get('payload').get('parts')[-1]\
-    #                        .get('body').get('data')
-    #         else:
-    #             body_msg = msg_details.get('payload').get('body').get('data')
-    #         body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))
-    #         html_str = body_str.decode('UTF-8')
-    #         message_info['body'] = cleanMe(html_str)
-    #     except:
-    #         message_info['body'] = msg_details.get('snippet') + \
-    #         "\n================================================\n\n" + \
-    #         "Failed to retrieve the email body, please view it on the web./n"
-    #     messages_info.append(message_info)
-    # return messages_info
 
 
 def GetSentMessages(service, num_msg=6):

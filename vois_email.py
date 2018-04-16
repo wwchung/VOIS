@@ -181,7 +181,7 @@ class MessageScreen(Screen):
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
         reply_msg['to'] = reply_to
         reply_msg['subject'] = 'Re: ' + deepcopy(msg['subject'])
-        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format())[:-6] + u' \"' + reply_to + u'\" wrote:\n' + str(msg['body'].strip('\n'))
+        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format())[:-6] + u' \"' + reply_to + u'\" wrote:\n' + str(msg['body'])
         forward_msg.clear()
         forward_msg['to'] = ''
         forward_msg['subject'] = 'Fw: ' + deepcopy(msg['subject'])
@@ -189,7 +189,7 @@ class MessageScreen(Screen):
             ' From: ' + forward_from + u'\n' + \
             ' Date: ' + str(arrow.get(msg['timestamp']).format())[:-6] + u'\n' + \
             ' Subject: ' + msg['subject'] + u'\n' + \
-            ' To: ' + reply_to + u' \n\n' + str(msg['body'].strip('\n'))
+            ' To: ' + reply_to + u' \n\n' + str(msg['body'])
         self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
 
 
@@ -228,25 +228,33 @@ class MessageScreen(Screen):
         self.header_widgets.clear()
         self.body_widgets.clear()
 
+global message_sending
+message_sending = {}
 
 class ComposeScreen(Screen):
-    
     header_widgets = []
     body_widgets = []
 
-    def compose_email(self, to, subject, body):
+    def compose_email(self, to, subject, body, method='COMPOSE'):
         self.header_widgets[1].text = to
         self.header_widgets[3].text = subject
+        if method == 'REPLY':
+            message_sending['body'] = deepcopy(body) + reply_msg['body']
+            body += '\n\n---------- VOIS ----------\nPrevious message history will be included.'
+        elif method == 'FORWARD':
+            message_sending['body'] = deepcopy(body) + forward_msg['body']
+            body += '\n\n---------- VOIS ----------\nPrevious message history will be included.'
+        else:
+            message_sending['body'] = deepcopy(body) 
         self.body_widgets[0].text = body
-
+        
     def send_email(self):
         recievers = self.header_widgets[1].text
         subject = self.header_widgets[3].text
-        body = self.body_widgets[0].text
-        if recievers and (subject or body):
+        if recievers and (subject or message_sending['body']):
             [x.strip() for x in recievers.split(';')]
             recievers = recievers.split(';')
-            message = CreateMessage(SENDER, recievers, subject, body)
+            message = CreateMessage(SENDER, recievers, subject, message_sending['body'])
             success, message = SendMessage(SERVICE, "me", message)
             if not success:
                 ti = TextInput(text=message, size_hint=(None, None),

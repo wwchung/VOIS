@@ -110,8 +110,8 @@ def GetInboxMessages(service, num_msg=6):
                 message_info['from'] = msg_from
             else:
                 pass
-        soup = BeautifulSoup(msg_details['snippet'] , "lxml" )
-        message_info['snippet'] = cleanMe(str(soup.body()))[1:-1] # fetching message snippet
+        if 'snippet' in msg_details:
+            message_info['snippet'] = cleanMe(msg_details['snippet']) # fetching message snippet
 
         try:
             # Fetching message body
@@ -144,6 +144,7 @@ def GetInboxMessages(service, num_msg=6):
                 
         except :
             print("Error, message_id:  ", message_info['msg_id'])
+            message_info['body'] = u''
             pass
         messages_info.append(message_info)
     return messages_info

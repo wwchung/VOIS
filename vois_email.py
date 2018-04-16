@@ -169,6 +169,8 @@ class MessageScreen(Screen):
         self.body_widgets[0].text = ''
         try:
             self.body_widgets[0].text = msg['body']
+            print(len(msg['body']))
+            print(msg['body'])
         except Exception:
             self.body_widgets[0].text = msg['snippet']
 
@@ -178,16 +180,16 @@ class MessageScreen(Screen):
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
         reply_msg['to'] = reply_to
         reply_msg['subject'] = 'Re: ' + msg['subject']
-        reply_msg['body'] = '\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + ' \"' + reply_to + '\" wrote:\n' + msg['body']
+        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + u' \"' + reply_to + u'\" wrote:\n' + msg['body']
         forward_msg.clear()
         forward_msg['to'] = ''
         forward_msg['subject'] = 'Fw: ' + msg['subject']
-        forward_msg['body'] = '\n\n' + '---------- Forwarded message ----------\n' + \
-            ' From: ' + forward_from + '\n' + \
-            ' Date: ' + str(arrow.get(msg['timestamp']).format()) + '\n' + \
-            ' Subject: ' + msg['subject'] + '\n' + \
-            ' To: ' + reply_to + ' \n\n' + msg['body']
-        self.body_widgets[1].text = '\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
+        forward_msg['body'] = u'\n\n' + '---------- Forwarded message ----------\n' + \
+            ' From: ' + forward_from + u'\n' + \
+            ' Date: ' + str(arrow.get(msg['timestamp']).format()) + u'\n' + \
+            ' Subject: ' + msg['subject'] + u'\n' + \
+            ' To: ' + reply_to + u' \n\n' + msg['body']
+        self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
 
 
     def reset_widgets(self):
@@ -235,7 +237,8 @@ class ComposeScreen(Screen):
         self.header_widgets[1].text = to
         self.header_widgets[3].text = subject
         self.body_widgets[0].text = ''
-        # print(body)
+        print(len(body))
+        print(body)
         self.body_widgets[0].text = body
 
     def send_email(self):

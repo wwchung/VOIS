@@ -481,15 +481,15 @@ def error_check(image):
     else:
         display_invalid_action('Error: Invalid action type')
     
-    execute(data)
-    # try:
-    #     execute(data)
-    # except:
-    #     pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
-    #                 size_hint=(None, None), size=(300, 200))
-    #     pop.open()
-    #     time.sleep(2)
-    #     pop.dismiss()
+    # execute(data)
+    try:
+        execute(data)
+    except:
+        pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
+                    size_hint=(None, None), size=(300, 200))
+        pop.open()
+        time.sleep(2)
+        pop.dismiss()
 
 
 # Listen to dynamoDB for new commands

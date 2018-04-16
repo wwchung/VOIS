@@ -170,10 +170,18 @@ class MessageScreen(Screen):
         self.header_widgets[3].text = msg['subject']
         time.sleep(0.5)
         self.body_widgets[0].text = ''
-        try:
-            self.body_widgets[0].text = msg['body']
-        except Exception:
-            self.body_widgets[0].text = msg['snippet']
+
+        count = 0
+        while True:
+            try:
+                self.body_widgets[0].text = msg['body']
+            except Exception:
+                print('Attempting to compose again...')
+                count += 1
+                if count > 4:
+                    break
+                continue
+            break
 
         if inbox:
             # mark message as READ
@@ -245,8 +253,12 @@ class ComposeScreen(Screen):
             message_sending['body'] = deepcopy(body) + forward_msg['body']
             body += '\n\n---------- VOIS ----------\nPrevious message history will be included.'
         else:
-            message_sending['body'] = deepcopy(body) 
-        self.body_widgets[0].text = body
+            message_sending['body'] = deepcopy(body)
+        count = 0
+        try:
+            self.body_widgets[0].text = body
+        except Exception:
+            self.body_widgets[0].text = "Message attached. Use voice command to send."
         
     def send_email(self):
         recievers = self.header_widgets[1].text

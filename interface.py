@@ -156,7 +156,7 @@ def execute(data):
     elif action_type == 'emailreply':
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
-        message = u"" + context['Message'] #+ deepcopy(vois_email.reply_msg['body'])
+        message = u"" + context['Message'] + deepcopy(vois_email.reply_msg['body'])
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'
@@ -169,7 +169,7 @@ def execute(data):
             display_invalid_action('Error: Invalid contact name')
             return
         subject = vois_email.forward_msg['subject']
-        message = u"" + context['Message'] #+ deepcopy(vois_email.forward_msg['body'])
+        message = u"" + context['Message'] + deepcopy(vois_email.forward_msg['body'])
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'
@@ -481,15 +481,15 @@ def error_check(image):
     else:
         display_invalid_action('Error: Invalid action type')
     
-    execute(data)
-    # try:
-    #     execute(data)
-    # except:
-    #     pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
-    #                 size_hint=(None, None), size=(300, 200))
-    #     pop.open()
-    #     time.sleep(2)
-    #     pop.dismiss()
+    # execute(data)
+    try:
+        execute(data)
+    except:
+        pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
+                    size_hint=(None, None), size=(300, 200))
+        pop.open()
+        time.sleep(2)
+        pop.dismiss()
 
 
 # Listen to dynamoDB for new commands

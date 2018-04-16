@@ -181,7 +181,7 @@ class MessageScreen(Screen):
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
         reply_msg['to'] = reply_to
         reply_msg['subject'] = 'Re: ' + deepcopy(msg['subject'])
-        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format())[:-6] + u' \"' + reply_to + u'\" wrote:\n' + str(msg['snippet'])
+        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format())[:-6] + u' \"' + reply_to + u'\" wrote:\n' + str(msg['body'].strip('\n'))
         forward_msg.clear()
         forward_msg['to'] = ''
         forward_msg['subject'] = 'Fw: ' + deepcopy(msg['subject'])
@@ -189,7 +189,7 @@ class MessageScreen(Screen):
             ' From: ' + forward_from + u'\n' + \
             ' Date: ' + str(arrow.get(msg['timestamp']).format())[:-6] + u'\n' + \
             ' Subject: ' + msg['subject'] + u'\n' + \
-            ' To: ' + reply_to + u' \n\n' + str(msg['snippet'])
+            ' To: ' + reply_to + u' \n\n' + str(msg['body'].strip('\n'))
         self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
 
 

@@ -12,6 +12,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import Screen
 from kivy.uix.popup import Popup
+from copy import deepcopy
 import arrow
 import httplib2
 import re
@@ -145,7 +146,9 @@ class SentScreen(Screen):
         self.buttons.clear()
 
 
+global reply_msg
 reply_msg = {}
+global forward_msg
 forward_msg = {}
 
 
@@ -169,8 +172,6 @@ class MessageScreen(Screen):
         self.body_widgets[0].text = ''
         try:
             self.body_widgets[0].text = msg['body']
-            print(len(msg['body']))
-            print(msg['body'])
         except Exception:
             self.body_widgets[0].text = msg['snippet']
 
@@ -179,16 +180,16 @@ class MessageScreen(Screen):
             if 'UNREAD' in msg['labels']:
                 ModifyMessage(SERVICE, msg['msg_id'], {"removeLabelIds":['UNREAD']})
         reply_msg['to'] = reply_to
-        reply_msg['subject'] = 'Re: ' + msg['subject']
-        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format()) + u' \"' + reply_to + u'\" wrote:\n' + msg['body']
+        reply_msg['subject'] = 'Re: ' + deepcopy(msg['subject'])
+        reply_msg['body'] = u'\n\nOn ' + str(arrow.get(msg['timestamp']).format())[:-6] + u' \"' + reply_to + u'\" wrote:\n' + str(msg['snippet'])
         forward_msg.clear()
         forward_msg['to'] = ''
-        forward_msg['subject'] = 'Fw: ' + msg['subject']
+        forward_msg['subject'] = 'Fw: ' + deepcopy(msg['subject'])
         forward_msg['body'] = u'\n\n' + '---------- Forwarded message ----------\n' + \
             ' From: ' + forward_from + u'\n' + \
-            ' Date: ' + str(arrow.get(msg['timestamp']).format()) + u'\n' + \
+            ' Date: ' + str(arrow.get(msg['timestamp']).format())[:-6] + u'\n' + \
             ' Subject: ' + msg['subject'] + u'\n' + \
-            ' To: ' + reply_to + u' \n\n' + msg['body']
+            ' To: ' + reply_to + u' \n\n' + str(msg['snippet'])
         self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
 
 
@@ -236,9 +237,6 @@ class ComposeScreen(Screen):
     def compose_email(self, to, subject, body):
         self.header_widgets[1].text = to
         self.header_widgets[3].text = subject
-        self.body_widgets[0].text = ''
-        print(len(body))
-        print(body)
         self.body_widgets[0].text = body
 
     def send_email(self):

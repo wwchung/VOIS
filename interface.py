@@ -11,6 +11,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from pynput.keyboard import Key, Controller
 from threading import Thread
+from copy import deepcopy
 import ast
 import contacts
 import boto3
@@ -155,7 +156,7 @@ def execute(data):
     elif action_type == 'emailreply':
         to = vois_email.reply_msg['to']
         subject = vois_email.reply_msg['subject']
-        message = u"" + context['Message'] + vois_email.reply_msg['body']
+        message = u"" + context['Message'] #+ deepcopy(vois_email.reply_msg['body'])
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'
@@ -168,7 +169,7 @@ def execute(data):
             display_invalid_action('Error: Invalid contact name')
             return
         subject = vois_email.forward_msg['subject']
-        message = u"" + context['Message'] + vois_email.forward_msg['body']
+        message = u"" + context['Message'] #+ deepcopy(vois_email.forward_msg['body'])
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'compose'

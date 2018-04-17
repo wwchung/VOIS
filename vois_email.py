@@ -159,29 +159,19 @@ class MessageScreen(Screen):
 
     def open_message(self, msg, inbox):
         if inbox:
-            self.header_widgets[1].text = msg['from']
+            self.ids.message_from_to_label.text = u'From:'
+            self.ids.message_from_to.text = msg['from']
             reply_to = msg.get('reply') if msg.get('reply') else (parseaddr(msg.get('from'))[1] if len(parseaddr(msg.get('from'))) > 1 else msg.get('from'))
             forward_from = msg['from']
         else:
-            self.header_widgets[1].text = msg['to']
+            self.ids.message_from_to_label.text = u'To:'
+            self.ids.message_from_to.text = msg['to']
             reply_to = parseaddr(msg.get('to'))[1] if len(parseaddr(msg.get('to'))) > 1 else msg.get('to')
             forward_from = SENDER
         
-        self.header_widgets[3].text = msg['subject']
-        time.sleep(0.5)
-        self.body_widgets[0].text = ''
-
-        count = 0
-        while True:
-            try:
-                self.body_widgets[0].text = msg['body']
-            except Exception:
-                print('Attempting to compose again...')
-                count += 1
-                if count > 4:
-                    break
-                continue
-            break
+        self.ids.message_subject.text = msg['subject']
+        time.sleep(0.25)
+        self.ids.message_body.text = msg['body']
 
         if inbox:
             # mark message as READ
@@ -198,43 +188,43 @@ class MessageScreen(Screen):
             ' Date: ' + str(arrow.get(msg['timestamp']).format())[:-6] + u'\n' + \
             ' Subject: ' + msg['subject'] + u'\n' + \
             ' To: ' + reply_to + u' \n\n' + str(msg['body'])
-        self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
+        # self.body_widgets[1].text = u'\"Reply with message {message}\" OR\n\"Forward to {to} with message {message}\"'
 
 
-    def reset_widgets(self):
-        self.remove_widgets()
+    # def reset_widgets(self):
+    #     self.remove_widgets()
 
-        from_label = Label(text='From:', font_size='20sp', size_hint=(0.2, None), height=120)
-        self.header_widgets.append(from_label)
-        self.ids.header_grid.add_widget(from_label)
+    #     # from_label = Label(text='From:', font_size='20sp', size_hint=(0.2, None), height=120)
+    #     # self.header_widgets.append(from_label)
+    #     # self.ids.header_grid.add_widget(from_label)
 
-        from_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
-        self.header_widgets.append(from_label)
-        self.ids.header_grid.add_widget(from_label)
+    #     # from_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
+    #     # self.header_widgets.append(from_label)
+    #     # self.ids.header_grid.add_widget(from_label)
 
-        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
-        self.header_widgets.append(subject_label)
-        self.ids.header_grid.add_widget(subject_label)
+    #     # subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
+    #     # self.header_widgets.append(subject_label)
+    #     # self.ids.header_grid.add_widget(subject_label)
         
-        subject_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
-        self.header_widgets.append(subject_label)
-        self.ids.header_grid.add_widget(subject_label)
+    #     # subject_label = Label(text='', font_size='20sp', valign='center', size_hint=(0.8, None), height=120)
+    #     # self.header_widgets.append(subject_label)
+    #     # self.ids.header_grid.add_widget(subject_label)
         
-        body_text_input = TextInput(text='', font_size='20sp', multiline=True, focus=True)
-        self.body_widgets.append(body_text_input)
-        self.ids.body_grid.add_widget(body_text_input)
+    #     # body_text_input = TextInput(text='', font_size='20sp', multiline=True, focus=True)
+    #     # self.body_widgets.append(body_text_input)
+    #     # self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='Reply', font_size='20sp', size_hint=(1, None), height=120)
-        self.body_widgets.append(btn)
-        self.ids.body_grid.add_widget(btn)
+    #     # btn = Button(text='Reply', font_size='20sp', size_hint=(1, None), height=120)
+    #     # self.body_widgets.append(btn)
+    #     # self.ids.body_grid.add_widget(btn)
 
-    def remove_widgets(self):
-        for widget in self.header_widgets:
-            self.ids.header_grid.remove_widget(widget)
-        for widget in self.body_widgets:
-            self.ids.body_grid.remove_widget(widget)
-        self.header_widgets.clear()
-        self.body_widgets.clear()
+    # def remove_widgets(self):
+    #     for widget in self.header_widgets:
+    #         self.ids.header_grid.remove_widget(widget)
+    #     for widget in self.body_widgets:
+    #         self.ids.body_grid.remove_widget(widget)
+    #     self.header_widgets.clear()
+    #     self.body_widgets.clear()
 
 global message_sending
 message_sending = {}

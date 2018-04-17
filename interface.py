@@ -177,8 +177,7 @@ def execute(data):
         sm.current = 'compose'
 
     elif action_type == 'emailsend':
-        screen = vois_email.ComposeScreen()
-        screen.send_email()
+        sm.get_screen('compose').send_email()
         sm.current = 'loading'
         time.sleep(0.5)
         sm.current = 'email'
@@ -207,9 +206,9 @@ def execute(data):
             msg = vois_email.inbox_messages[message_number - 1]
             sm.current = 'loading'
             time.sleep(0.5)
+            sm.get_screen('message').open_message(msg, True)
+            sm.transition.direction = 'left'        
             sm.current = 'message'
-            screen = vois_email.MessageScreen()
-            screen.open_message(msg, True)
 
         elif sm.current == 'sent':
             if int(message_number) > min(7, len(vois_email.sent_messages)):
@@ -218,9 +217,9 @@ def execute(data):
             msg = vois_email.sent_messages[message_number - 1]
             sm.current = 'loading'
             time.sleep(0.5)
+            sm.get_screen('message').open_message(msg, False)
+            sm.transition.direction = 'left'        
             sm.current = 'message'
-            screen = vois_email.MessageScreen()
-            screen.open_message(msg, False)
 
     # Document
     elif action_type == 'documentcreate':

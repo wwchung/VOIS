@@ -157,7 +157,7 @@ def GetSentMessages(service, num_msg=6):
         msg_id = msg.get('id')
         msg_details = GetMessage(service, msg_id)
         message_info = {'msg_id': msg_id,
-                        'snippet': msg_details.get('snippet'),
+                        'snippet': cleanMe(msg_details['snippet']),
                         'timestamp': int(msg_details.get('internalDate'))/1000}
 
         for entry in msg_details.get('payload').get('headers'):
@@ -167,20 +167,54 @@ def GetSentMessages(service, num_msg=6):
                 message_info['to'] = value
             elif name == 'subject':
                 message_info['subject'] = value
+        # try:
+        #     if msg_details.get('payload').get('parts'):
+        #         if msg_details.get('payload').get('parts')[-1].get('body').get('size') == 0:
+        #             body_msg = msg_details.get('payload').get('parts')[-1].get('parts')[-1].\
+        #             get('body').get('data')
+        #         else:
+        #             body_msg = msg_details.get('payload').get('parts')[-1].get('body').get('data')
+        #     else:
+        #         body_msg = msg_details.get('payload').get('body').get('data')
+        #     body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))
+        #     html_str = body_str.decode('UTF-8')
+        #     message_info['body'] = cleanMe(html_str)
+        # except:
+        #     message_info['body'] = "Failed to retrieve the email body, \
+        #                             please view it on the web./n"
         try:
-            if msg_details.get('payload').get('parts'):
-                if msg_details.get('payload').get('parts')[-1].get('body').get('size') == 0:
-                    body_msg = msg_details.get('payload').get('parts')[-1].get('parts')[-1].\
-                    get('body').get('data')
-                else:
-                    body_msg = msg_details.get('payload').get('parts')[-1].get('body').get('data')
+            # Fetching message body
+            payload = msg_details['payload'] # get payload of the message 
+            if 'parts' in payload:
+                mssg_parts = payload['parts'] # fetching the message parts
+                part_one  = mssg_parts[0] # fetching first element of the part
+                part_body = part_one['body'] # fetching body of the message
+                if not 'data' in part_body and 'parts' in payload['parts'][0]:
+                    mssg_parts = payload['parts'][0]['parts'] # fetching the message parts
+                    part_one  = mssg_parts[0] # fetching first element of the part
+                    part_body = part_one['body'] # fetching body of the message
+            elif 'body' in payload:
+                part_body = payload['body']
             else:
-                body_msg = msg_details.get('payload').get('body').get('data')
-            body_str = base64.urlsafe_b64decode(body_msg.encode('ASCII'))
-            html_str = body_str.decode('UTF-8')
-            message_info['body'] = cleanMe(html_str)
-        except:
-            message_info['body'] = "Failed to retrieve the email body, \
-                                    please view it on the web./n"
+                part_body = {'data': msg_details['snippet']}
+
+            if not 'data' in part_body:
+                part_data = message_info['snippet']
+            else:
+                part_data = part_body['data'] # fetching data from the body
+            clean_one = part_data.replace("-","+") # decoding from Base64 to UTF-8
+            clean_one = clean_one.replace("_","/") # decoding from Base64 to UTF-8
+            clean_two = base64.b64decode (bytes(clean_one, 'UTF-8')) # decoding from Base64 to UTF-8
+            soup = BeautifulSoup(clean_two , "lxml" )
+            mssg_body = soup.body()
+            # mssg_body is a readible form of message body
+            # depending on the end user's requirements, it can be further cleaned 
+            # using regex, beautiful soup, or any other method
+            message_info['body'] = cleanMe(str(mssg_body))[1:-1]
+                
+        except :
+            print("Error, message_id:  ", message_info['msg_id'])
+            message_info['body'] = u''
+            pass
         messages_info.append(message_info)
     return messages_info

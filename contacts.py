@@ -75,7 +75,7 @@ c.addContact("Dan", "dwuu@umich.edu", "email")
 c.addContact("Grant", "7818988832")
 c.addContact("Grant", "guangyu@umich.edu", "email")
 c.addContact("Aki", "7345068603")
-c.addContact("Aki", "guangyu@umich.edu", "email")
+c.addContact("Aki", "otamvh@umich.edu", "email")
 c.addContact("voice", "eecs498.vois@gmail.com", "email")
 c.addContact("test", "eecs498.vois@gmail.com", "email")
 

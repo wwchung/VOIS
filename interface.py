@@ -159,9 +159,9 @@ def execute(data):
         message = u"" + context['Message']
         sm.current = 'loading'
         time.sleep(0.5)
+        sm.get_screen('compose').compose_email(to, subject, message, 'REPLY')
+        sm.transition.direction = 'left'        
         sm.current = 'compose'
-        screen = vois_email.ComposeScreen()
-        screen.compose_email(to, subject, message, 'REPLY')
     
     elif action_type == 'emailforward':
         to = contact_book.getContact(context['To'], "email")
@@ -172,9 +172,9 @@ def execute(data):
         message = u"" + context['Message']
         sm.current = 'loading'
         time.sleep(0.5)
+        sm.get_screen('compose').compose_email(to, subject, message, 'FORWARD')
+        sm.transition.direction = 'left'        
         sm.current = 'compose'
-        screen = vois_email.ComposeScreen()
-        screen.compose_email(to, subject, message, 'FORWARD')
 
     elif action_type == 'emailsend':
         screen = vois_email.ComposeScreen()
@@ -481,15 +481,15 @@ def error_check(image):
     else:
         display_invalid_action('Error: Invalid action type')
     
-    # execute(data)
-    try:
-        execute(data)
-    except:
-        pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
-                    size_hint=(None, None), size=(300, 200))
-        pop.open()
-        time.sleep(2)
-        pop.dismiss()
+    execute(data)
+    # try:
+    #     execute(data)
+    # except:
+    #     pop = Popup(title='Error', content=Label(text='An error has occurred.'), 
+    #                 size_hint=(None, None), size=(300, 200))
+    #     pop.open()
+    #     time.sleep(2)
+    #     pop.dismiss()
 
 
 # Listen to dynamoDB for new commands

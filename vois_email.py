@@ -244,8 +244,8 @@ class ComposeScreen(Screen):
     body_widgets = []
 
     def compose_email(self, to, subject, body, method='COMPOSE'):
-        self.header_widgets[1].text = to
-        self.header_widgets[3].text = subject
+        self.ids.message_to.text = to
+        self.ids.message_subject.text = subject
         if method == 'REPLY':
             message_sending['body'] = deepcopy(body) + reply_msg['body']
             body += '\n\n---------- VOIS ----------\nPrevious message history will be included.'
@@ -254,15 +254,16 @@ class ComposeScreen(Screen):
             body += '\n\n---------- VOIS ----------\nPrevious message history will be included.'
         else:
             message_sending['body'] = deepcopy(body)
-        count = 0
         try:
-            self.body_widgets[0].text = body
+            self.ids.message_body.text = body
+            # self.body_widgets[0].text = body
         except Exception:
-            self.body_widgets[0].text = "Message attached. Use voice command to send."
+            self.ids.message_body.text = "Message attached. Use voice command to send."
+            # self.body_widgets[0].text = "Message attached. Use voice command to send."
         
     def send_email(self):
-        recievers = self.header_widgets[1].text
-        subject = self.header_widgets[3].text
+        recievers = self.ids.message_to.text
+        subject = self.ids.message_subject.text
         if recievers and (subject or message_sending['body']):
             [x.strip() for x in recievers.split(';')]
             recievers = recievers.split(';')
@@ -277,37 +278,39 @@ class ComposeScreen(Screen):
                 time.sleep(3)
                 pop.dismiss()
 
-    def reset_widgets(self):
-        self.remove_widgets()
+    # def reset_widgets(self):
+    #     # self.remove_widgets()
+    #     self.ids.message_to.text = ''
+    #     self.ids.message_subject.text = ''
+    #     self.ids.message_body.text = ''
+    #     # to_label = Label(text='To:', font_size='20sp', size_hint=(0.2, None), height=120)
+    #     # self.header_widgets.append(to_label)
+    #     # self.ids.header_grid.add_widget(to_label)
 
-        to_label = Label(text='To:', font_size='20sp', size_hint=(0.2, None), height=120)
-        self.header_widgets.append(to_label)
-        self.ids.header_grid.add_widget(to_label)
+    #     # to_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
+    #     # self.header_widgets.append(to_text_input)
+    #     # self.ids.header_grid.add_widget(to_text_input)
 
-        to_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
-        self.header_widgets.append(to_text_input)
-        self.ids.header_grid.add_widget(to_text_input)
-
-        subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
-        self.header_widgets.append(subject_label)
-        self.ids.header_grid.add_widget(subject_label)
+    #     # subject_label = Label(text='Subject:', font_size='20sp', size_hint=(0.2, None), height=120)
+    #     # self.header_widgets.append(subject_label)
+    #     # self.ids.header_grid.add_widget(subject_label)
         
-        subject_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
-        self.header_widgets.append(subject_text_input)
-        self.ids.header_grid.add_widget(subject_text_input)
+    #     # subject_text_input = TextInput(text='', font_size='20sp', size_hint=(0.8, None), height=120)
+    #     # self.header_widgets.append(subject_text_input)
+    #     # self.ids.header_grid.add_widget(subject_text_input)
         
-        body_text_input = TextInput(text='', font_size='20sp')
-        self.body_widgets.append(body_text_input)
-        self.ids.body_grid.add_widget(body_text_input)
+    #     # body_text_input = TextInput(text='', font_size='20sp')
+    #     # self.body_widgets.append(body_text_input)
+    #     # self.ids.body_grid.add_widget(body_text_input)
 
-        btn = Button(text='\"Send email\"', font_size='20sp', size_hint=(1, None), height=120)
-        self.body_widgets.append(btn)
-        self.ids.body_grid.add_widget(btn)
+    #     # btn = Button(text='\"Send email\"', font_size='20sp', size_hint=(1, None), height=120)
+    #     # self.body_widgets.append(btn)
+    #     # self.ids.body_grid.add_widget(btn)
 
-    def remove_widgets(self):
-        for widget in self.header_widgets:
-            self.ids.header_grid.remove_widget(widget)
-        for widget in self.body_widgets:
-            self.ids.body_grid.remove_widget(widget)
-        self.header_widgets.clear()
-        self.body_widgets.clear()
+    # def remove_widgets(self):
+    #     for widget in self.header_widgets:
+    #         self.ids.header_grid.remove_widget(widget)
+    #     for widget in self.body_widgets:
+    #         self.ids.body_grid.remove_widget(widget)
+    #     self.header_widgets.clear()
+    #     self.body_widgets.clear()

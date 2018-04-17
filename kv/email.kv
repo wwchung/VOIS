@@ -84,7 +84,6 @@
 
 
 <ComposeScreen>:
-    on_pre_enter: root.reset_widgets()
     GridLayout:
         canvas.before:
             Color:
@@ -99,3 +98,34 @@
             cols: 2
             size_hint: (1, None)
             height: 240
+            Label:
+                font_size: '20sp'
+                text: 'To:'
+                size_hint: (0.2, None)
+                height: 120
+            TextInput:
+                id: message_to
+                text: ''
+                font_size: '20sp'
+                size_hint: (0.8, None)
+                height: 120
+            Label:
+                font_size: '20sp'
+                text: 'Subject:'
+                size_hint: (0.2, None)
+                height: 120
+            TextInput:
+                id: message_subject
+                text: ''
+                font_size: '20sp'
+                size_hint: (0.8, None)
+                height: 120
+        TextInput:
+            id: message_body
+            text: ''
+            font_size: '20sp'
+        Button:
+            id: send_email_btn
+            text: '\"Send email\"'
+            font_size: '20sp'
+            height: 120

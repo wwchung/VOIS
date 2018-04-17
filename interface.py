@@ -75,9 +75,9 @@ contact_book = contacts.ContactBook()
 
 def display_invalid_action(message):
     pop = Popup(title='Invalid action', content=Label(text=message), 
-                size_hint=(None, None), size=(300, 200))
+                size_hint=(None, None), size=(700, 450))
     pop.open()
-    time.sleep(2)
+    time.sleep(3)
     pop.dismiss()
 
 #Execute Commands

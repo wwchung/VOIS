@@ -24,7 +24,7 @@ def call(voice):
 
     print("Calling: ", outgoing)
 
-    voice.call('+1'+outgoing, '+17345854520')
+    voice.call('+1'+outgoing, '+17347806855')
 
 
 voice = Voice() #Create new voice object

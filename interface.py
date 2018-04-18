@@ -149,9 +149,9 @@ def execute(data):
         message = context['Message']
         sm.current = 'loading'
         time.sleep(0.5)
+        sm.get_screen('compose').compose_email(to, subject, message)
+        sm.transition.direction = 'left' 
         sm.current = 'compose'
-        screen = vois_email.ComposeScreen()
-        screen.compose_email(to, subject, message)
 
     elif action_type == 'emailreply':
         to = vois_email.reply_msg['to']

@@ -234,6 +234,9 @@ class ComposeScreen(Screen):
     body_widgets = []
 
     def compose_email(self, to, subject, body, method='COMPOSE'):
+        self.ids.message_to.text = ''
+        self.ids.message_subject.text = ''
+        self.ids.message_body.text = ''
         self.ids.message_to.text = to
         self.ids.message_subject.text = subject
         if method == 'REPLY':
